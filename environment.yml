@@ -1,0 +1,26 @@
+name: SEAK-clim
+channels:
+  - conda-forge
+  - defaults  
+dependencies:
+  - python=3.7
+  - pip
+  - numpy
+  - scipy
+  - matplotlib
+  - pandas
+  - netcdf4
+  - xarray
+  - dask
+  - bottleneck
+  - cartopy
+  - cmocean
+  - seaborn
+  - cmocean
+  - metpy
+  - ipykernel
+  - jupyter
+  - ffmpeg
+  - geopandas
+  - pip:
+    - boto3

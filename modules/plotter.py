@@ -93,6 +93,24 @@ def draw_basemap(ax, datacrs=ccrs.PlateCarree(), extent=None, xticks=None, ytick
         gl = ax.gridlines(draw_labels=False,
                       linewidth=.5, color='black', alpha=0.5, linestyle='--')
     
+    elif mapcrs == ccrs.Mercator():
+#         gl = ax.gridlines(draw_labels=False,
+#                       linewidth=.5, color='black', alpha=0.5, linestyle='--')
+        
+        gl = ax.gridlines(crs=datacrs, draw_labels=True,
+                  linewidth=.5, color='black', alpha=0.5, linestyle='--')
+
+        gl.top_labels = False
+        gl.left_labels = left_lats
+        gl.right_labels = right_lats
+        gl.bottom_labels = bottom_lons
+        gl.xlocator = mticker.FixedLocator(xticks)
+        gl.ylocator = mticker.FixedLocator(yticks)
+        gl.xformatter = LONGITUDE_FORMATTER
+        gl.yformatter = LATITUDE_FORMATTER
+        gl.xlabel_style = {'size': 10, 'color': 'gray'}
+        gl.ylabel_style = {'size': 10, 'color': 'gray'}
+        
     else:
         gl = ax.gridlines(crs=mapcrs, draw_labels=True,
                       linewidth=.5, color='black', alpha=0.5, linestyle='--')
