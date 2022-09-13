@@ -1,6 +1,7 @@
 # Filename:    ERA5_config.yml
 # Author:      Deanna Nash, dlnash@ucsb.edu
-# Description: Dictionary of different download variables/options for ERA5 - for use in conjunction with getERA5_batch.py
+# Description: Dictionary of different download variables/options for ERA5
+# for use in conjunction with getERA5_batch.py and download_ERA5.sh
 
 ---
 case_study_202012:
@@ -10,24 +11,52 @@ case_study_202012:
     start_yr: 2020
     end_yr: 2020
     month: ['12']
-    day: ['05','06','07','08','09']
+    day: ['01','02', '03']
     time: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00']
-    area: [50, 0, 0, 110] # [N,W,S,E] Default: global
+    area: [61, -141, 54, -130] # [N,W,S,E] Default: global
     grid: [0.25, 0.25]
     datadir: '/work/dnash/SEAK_clim_data/downloads/ERA5'
-    fprefix: "era5_uvq_prs_20201201_202012"
+    fprefix: "era5_uvq_prs_20201201_20201203"
     
-ivt_case_202012:
+prec_case_202012:
     data_type: 'reanalysis-era5-single-levels'
     levels: 'OFF'
-    var_name: ['vertical_integral_of_northward_water_vapour_flux', 'vertical_integral_of_eastward_water_vapour_flux', 'mean_total_precipitation_rate']
+    var_name: ['mean_total_precipitation_rate']
     start_yr: 2010
     end_yr: 2010
     month: ['12']
-    day: ['04', '05','06','07','08','09']
+    day: ['01','02', '03']
     time: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00']
-    area: [50, 0, 0, 110] # [N,W,S,E] Default: global
+    area: [61, -141, 54, -130] # [N,W,S,E] Default: global
     grid: [0.25, 0.25]
     datadir: '/work/dnash/SEAK_clim_data/downloads/ERA5/'
-    fprefix: "era5_hma_025deg_1hr_ivt_20201201_202012"
+    fprefix: "era5_hma_025deg_1hr_prec_20201201_20201203"
+    
+case_study_202011:
+    data_type: 'reanalysis-era5-pressure-levels'
+    var_name: ['geopotential', 'specific_humidity', 'u_component_of_wind', 'v_component_of_wind', 'temperature']
+    levels: ['200', '225', '250', '300', '350', '400', '450', '500', '550', '600', '650', '700', '750', '775', '800', '825', '850', '875', '900', '925', '950', '975', '1000']
+    start_yr: 2020
+    end_yr: 2020
+    month: ['11']
+    day: ['28','29','30']
+    time: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00']
+    area: [61, -141, 54, -130] # [N,W,S,E] Default: global
+    grid: [0.25, 0.25]
+    datadir: '/work/dnash/SEAK_clim_data/downloads/ERA5'
+    fprefix: "era5_uvq_prs_20201128_20201130"
+    
+prec_case_202011:
+    data_type: 'reanalysis-era5-single-levels'
+    levels: 'OFF'
+    var_name: ['mean_total_precipitation_rate']
+    start_yr: 2010
+    end_yr: 2010
+    month: ['11']
+    day: ['28','29','30']
+    time: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00']
+    area: [61, -141, 54, -130] # [N,W,S,E] Default: global
+    grid: [0.25, 0.25]
+    datadir: '/work/dnash/SEAK_clim_data/downloads/ERA5/'
+    fprefix: "era5_hma_025deg_1hr_prec_20201128_20201130"
 ...

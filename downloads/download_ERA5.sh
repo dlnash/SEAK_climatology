@@ -6,19 +6,20 @@
 #
 ######################################################################
 
-### Step 1: Activate conda env
+### Activate bash
+
+source /home/dnash/miniconda3/etc/profile.d/conda.sh 
+
+### Activate conda env
 
 conda activate cds
 
 # names of configuration dictionaries to loop through
 array=(
-ivt # 6 hourly IVT climatology over HMA
-prec # 6 hourly precip climatology over HMA
-huvq # 6 hourly 250 hPa geopotential heights and wind
-ivt_case_201002 # hourly ivt and precip for 2010 AR case
-ivt_case_200201 # hourly ivt and precip for 2002 AR case
-250z_case_201002 # hourly 250 hPa for 2010 AR case
-250z_case_200201 # hourly 250 hPa for 2002 AR case
+case_study_202012 # hourly pressure level data, dec 1-3, 2020
+prec_case_202012 # hourly precip dec 1-3, 2020
+case_study_202011 # hourly pressure level data, nov 28-30, 2020
+prec_case_202012 # hourly precip nov 28-30, 2020
 )
 
 # now loop through each configuration dictionary to download the ERA5 data

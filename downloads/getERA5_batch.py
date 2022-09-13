@@ -9,9 +9,9 @@ import cdsapi
 import yaml
 
 
-### IMPORTANT! CHANGE CONFIG NAME FOR DOWNLOAD DICTIONARY ###
-# config_name = 'ivt_case_200201'
+### Imports config name from argument when submit
 config_name = sys.argv[1]
+print(config_name)
 
 
 # import configuration file for season dictionary choice
