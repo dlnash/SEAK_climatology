@@ -1,0 +1,14 @@
+name: cenv
+channels:
+  - conda-forge
+  - defaults  
+dependencies:
+  - python
+  - pip
+  - jupyterlab>=3.0
+  - distributed
+  - jupyter-resource-usage
+  - jupyter-server-proxy
+  - nb_conda_kernels
+  - pip:
+      - dask-labextension

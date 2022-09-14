@@ -13,24 +13,24 @@ case_study_202012:
     month: ['12']
     day: ['01','02', '03']
     time: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00']
-    area: [61, -141, 54, -130] # [N,W,S,E] Default: global
+    area: [40, -175, 75, -120] # [N,W,S,E] Default: global 
     grid: [0.25, 0.25]
-    datadir: '/work/dnash/SEAK_clim_data/downloads/ERA5'
+    datadir: '/work/dnash/SEAK_clim_data/downloads/ERA5/'
     fprefix: "era5_uvq_prs_20201201_20201203"
     
 prec_case_202012:
     data_type: 'reanalysis-era5-single-levels'
     levels: 'OFF'
     var_name: ['mean_total_precipitation_rate']
-    start_yr: 2010
-    end_yr: 2010
+    start_yr: 2020
+    end_yr: 2020
     month: ['12']
     day: ['01','02', '03']
     time: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00']
-    area: [61, -141, 54, -130] # [N,W,S,E] Default: global
+    area: [40, -175, 75, -120] # [N,W,S,E] Default: global
     grid: [0.25, 0.25]
     datadir: '/work/dnash/SEAK_clim_data/downloads/ERA5/'
-    fprefix: "era5_hma_025deg_1hr_prec_20201201_20201203"
+    fprefix: "era5_SEAK_025deg_1hr_prec_20201201_20201203"
     
 case_study_202011:
     data_type: 'reanalysis-era5-pressure-levels'
@@ -41,22 +41,22 @@ case_study_202011:
     month: ['11']
     day: ['28','29','30']
     time: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00']
-    area: [61, -141, 54, -130] # [N,W,S,E] Default: global
+    area: [40, -175, 75, -120] # [N,W,S,E] Default: global
     grid: [0.25, 0.25]
-    datadir: '/work/dnash/SEAK_clim_data/downloads/ERA5'
+    datadir: '/work/dnash/SEAK_clim_data/downloads/ERA5/'
     fprefix: "era5_uvq_prs_20201128_20201130"
     
 prec_case_202011:
     data_type: 'reanalysis-era5-single-levels'
     levels: 'OFF'
     var_name: ['mean_total_precipitation_rate']
-    start_yr: 2010
-    end_yr: 2010
+    start_yr: 2020
+    end_yr: 2020
     month: ['11']
     day: ['28','29','30']
     time: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00']
-    area: [61, -141, 54, -130] # [N,W,S,E] Default: global
+    area: [40, -175, 75, -120] # [N,W,S,E] Default: global
     grid: [0.25, 0.25]
     datadir: '/work/dnash/SEAK_clim_data/downloads/ERA5/'
-    fprefix: "era5_hma_025deg_1hr_prec_20201128_20201130"
+    fprefix: "era5_SEAK_025deg_1hr_prec_20201128_20201130"
 ...

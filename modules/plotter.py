@@ -92,27 +92,9 @@ def draw_basemap(ax, datacrs=ccrs.PlateCarree(), extent=None, xticks=None, ytick
     elif mapcrs == ccrs.SouthPolarStereo():
         gl = ax.gridlines(draw_labels=False,
                       linewidth=.5, color='black', alpha=0.5, linestyle='--')
-    
-    elif mapcrs == ccrs.Mercator():
-#         gl = ax.gridlines(draw_labels=False,
-#                       linewidth=.5, color='black', alpha=0.5, linestyle='--')
-        
-        gl = ax.gridlines(crs=datacrs, draw_labels=True,
-                  linewidth=.5, color='black', alpha=0.5, linestyle='--')
-
-        gl.top_labels = False
-        gl.left_labels = left_lats
-        gl.right_labels = right_lats
-        gl.bottom_labels = bottom_lons
-        gl.xlocator = mticker.FixedLocator(xticks)
-        gl.ylocator = mticker.FixedLocator(yticks)
-        gl.xformatter = LONGITUDE_FORMATTER
-        gl.yformatter = LATITUDE_FORMATTER
-        gl.xlabel_style = {'size': 10, 'color': 'gray'}
-        gl.ylabel_style = {'size': 10, 'color': 'gray'}
         
     else:
-        gl = ax.gridlines(crs=mapcrs, draw_labels=True,
+        gl = ax.gridlines(crs=datacrs, draw_labels=True,
                       linewidth=.5, color='black', alpha=0.5, linestyle='--')
         gl.top_labels = False
         gl.left_labels = left_lats
@@ -381,16 +363,22 @@ def nice_intervals(data, nlevs):
     return clevs
 
 
-def _drawmap(fig, lons, lats, VO1, VO2, VO3, cmap1, cmap2, cmap3, clevs1, clevs2, clevs3, title, ext):
+def _drawmap(fig, lons, lats, VO1, VO2, VO3, cmap1, cmap2, cmap3, clevs1, clevs2, clevs3, title, ext,
+             datacrs, mapcrs, ndeg=10.):
     '''Draw contour map for create_animation.'''
-
-    # Set map and data projections
-    datacrs = ccrs.PlateCarree()  ## the projection the data is in
-    mapcrs = ccrs.PlateCarree() ## the projection you want your map displayed in
-    
+    # Clear current axis to overplot next time step
+    ax = fig.gca()
+    ax.clear()
     # Add subplot, title, and set extent
     ax = fig.add_subplot(1,1,1, projection=mapcrs)
-    ax.set_title(title, fontsize=14)
+    xticks = np.arange(ext[0], ext[1]+ndeg, ndeg)
+    yticks = np.arange(ext[2], ext[3]+ndeg, ndeg)
+    
+#     ax = draw_basemap(ax, datacrs=datacrs, 
+#                  extent=ext, xticks=None, yticks=None, 
+#                  grid=False, left_lats=True, right_lats=False, 
+#                  bottom_lons=True, mask_ocean=False)
+    
     ax.set_extent(ext, crs=mapcrs)
     
     # Add Border Features
@@ -398,15 +386,18 @@ def _drawmap(fig, lons, lats, VO1, VO2, VO3, cmap1, cmap2, cmap3, clevs1, clevs2
     ax.add_feature(cfeature.BORDERS)
     
     # Add grid lines
-    ndeg=20.
     gl = ax.gridlines(crs=datacrs, draw_labels=True,
                       linewidth=.5, color='black', alpha=0.5, linestyle='--')
-    gl.xlocator = mticker.FixedLocator(np.arange(ext[0], ext[1]+ndeg, ndeg))
-    gl.ylocator = mticker.FixedLocator(np.arange(ext[2], ext[3]+ndeg, ndeg))
+    gl.top_labels = False
+    gl.left_labels = True
+    gl.right_labels = False
+    gl.bottom_labels = True
+    gl.xlocator = mticker.FixedLocator(xticks)
+    gl.ylocator = mticker.FixedLocator(yticks)
     gl.xformatter = LONGITUDE_FORMATTER
     gl.yformatter = LATITUDE_FORMATTER
-    gl.xlabels_top = False
-    gl.ylabels_right = False
+    gl.xlabel_style = {'size': 10, 'color': 'gray'}
+    gl.ylabel_style = {'size': 10, 'color': 'gray'}
     
     # Add contour plot (line)
     cs = ax.contour(lons, lats, VO2, transform=datacrs,
@@ -416,15 +407,25 @@ def _drawmap(fig, lons, lats, VO1, VO2, VO3, cmap1, cmap2, cmap3, clevs1, clevs2
     plt.clabel(cs, **kw_clabels)
     
     # Add contour plot (shaded precip)
-    cf2 = ax.contourf(lons, lats, VO3, transform=datacrs, cmap=cmap3, levels=clevs3, zorder=0, extend='max')
+    cf2 = ax.contourf(lons, lats, VO3, transform=datacrs, cmap=cmap3, levels=clevs3, zorder=5, extend='max', alpha=0.5)
     
     # Add contour plot (shaded)
-    cf = ax.contourf(lons, lats, VO1, transform=datacrs, cmap=cmap1, levels=clevs1, zorder=5, extend='max', alpha=0.7)
-
+    cf = ax.contourf(lons, lats, VO1, transform=datacrs, cmap=cmap1, levels=clevs1, zorder=0, extend='max', alpha=0.8)
     
-    return cf, ax
+    ax.set_title(title, fontsize=14)
+    
+    # Add a color bar
+    cbar = fig.colorbar(cf, orientation='vertical', cmap=cmap1, shrink=0.99)
+#     cbar.set_label(units, fontsize=12)
+    
+#     # add second colorbar
+#     rect_loc = [1.02, 0.08, 0.03, 0.87]  # define position 
+#     cax2 = fig.add_axes(rect_loc)       # left | bottom | width | height
+#     cbar2  = plt.colorbar(second_contour, cax=cax2)
+    
+    return cf, cf2, ax
 
-def _myanimate(i, fig, DS, var1, var2, var3, lats, lons, cmap1, cmap2, cmap3, clevs1, clevs2, clevs3, ext):
+def _myanimate(i, fig, DS, var1, var2, var3, lats, lons, cmap1, cmap2, cmap3, clevs1, clevs2, clevs3, ext, datacrs, mapcrs):
     '''Loop through time steps for create_animation.'''
     # Clear current axis to overplot next time step
     ax = fig.gca()
@@ -438,10 +439,12 @@ def _myanimate(i, fig, DS, var1, var2, var3, lats, lons, cmap1, cmap2, cmap3, cl
     long_name = DS[var1].long_name
     title = '{0} at {1}'.format(long_name, ts)
     # Add next contour map
-    new_contour, new_ax = _drawmap(fig, lons, lats, VO1, VO2, VO3, cmap1, cmap2, cmap3, clevs1, clevs2, clevs3, title, ext) 
+    new_contour, new_contour2, new_ax = _drawmap(fig, lons, lats, VO1, VO2, VO3, cmap1, cmap2, cmap3, clevs1, clevs2, clevs3, title, ext, datacrs, mapcrs) 
+    
     return new_ax
 
-def create_animation(DS, var1, var2, var3, clevs1, clevs2, clevs3, cmap1, cmap2, cmap3, ext=[-180.0, 180.0, -90., 90.]):
+def create_animation(DS, var1, var2, var3, clevs1, clevs2, clevs3, cmap1, cmap2, cmap3, 
+                     ext=[-180.0, 180.0, -90., 90.], datacrs=ccrs.PlateCarree(), mapcrs=ccrs.PlateCarree()):
     '''Create an mp4 animation using an xarray dataset with lat, lon, and time dimensions.
     
         Parameters
@@ -474,22 +477,18 @@ def create_animation(DS, var1, var2, var3, clevs1, clevs2, clevs3, cmap1, cmap2,
     writer = FFMpegWriter(fps=20, metadata=metadata)
     
     # Create a new figure window
-    fig = plt.figure(figsize=[12,4])
-    # Draw first timestep
-    first_contour, first_ax = _drawmap(fig, lons, lats, DS[var1].values[0], DS[var2].values[0], DS[var3].values[0], cmap1, cmap2, cmap3, clevs1, clevs2, clevs3, title, ext)
-
-    # Add a color bar
-    cbar = fig.colorbar(first_contour, orientation='vertical', cmap=cmap1, shrink=0.99)
-    cbar.set_label(units, fontsize=12)
+    fig = plt.figure(figsize=[8,4])
+#     # Draw first timestep
+    first_contour, second_contour, first_ax = _drawmap(fig, lons, lats, DS[var1].values[0], DS[var2].values[0], DS[var3].values[0], cmap1, cmap2, cmap3, clevs1, clevs2, clevs3, title, ext, datacrs, mapcrs)
 
     # Loop through animation
     ani = animation.FuncAnimation(fig, _myanimate, frames=np.arange(len(DS[var1])),
-                                  fargs=(fig, DS, var1, var2, var3, lats, lons, cmap1, cmap2, cmap3, clevs1, clevs2, clevs3, ext), interval=50)
+                                  fargs=(fig, DS, var1, var2, var3, lats, lons, cmap1, 
+                                         cmap2, cmap3, clevs1, clevs2, clevs3, ext, datacrs, mapcrs), interval=50)
     filename = long_name + ".mp4"
     ani.save(long_name + ".mp4")
-    kw_fig = {'bbox_inches': 'tight'}
     
     # save animation at 30 frames per second 
-    ani.save(long_name + ".gif", writer='imagemagick', fps=10, savefig_kwargs=kw_fig)
+    ani.save(long_name + ".gif", writer='imagemagick', fps=10)
     
     return filename
