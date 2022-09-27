@@ -16,4 +16,11 @@ dependencies:
   - cmocean
   - ipykernel
   - geopandas
+  - pyyaml
+  - wrf-python
+  
+  - pip:
+    - boto3
+    - botocore
+
 

@@ -1,0 +1,14 @@
+# Filename:    mesonet_config.yml
+# Author:      Deanna Nash, dlnash@ucsb.edu
+# Description: Dictionary of different download precipitation variables for mesonet stations
+
+
+---
+PAYA:
+    start: '201808010000'
+    end: '201808010000'
+    obtimezone: 'UTC'
+    stids: 'PAYA'
+    token: "6f7bc78232734beab9da77235a2bd351"
+    
+...
