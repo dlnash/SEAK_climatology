@@ -4,6 +4,20 @@
 # for use in conjunction with getERA5_batch.py and download_ERA5.sh
 
 ---
+case_study_201801:
+    data_type: 'reanalysis-era5-pressure-levels'
+    var_name: ['geopotential', 'specific_humidity', 'u_component_of_wind', 'v_component_of_wind', 'temperature']
+    levels: ['200', '225', '250', '300', '350', '400', '450', '500', '550', '600', '650', '700', '750', '775', '800', '825', '850', '875', '900', '925', '950', '975', '1000']
+    start_yr: 2018
+    end_yr: 2018
+    month: ['01']
+    day: ['11','12', '13', '14', '15', '16']
+    time: ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00']
+    area: [40, -175, 75, -120] # [N,W,S,E] Default: global 
+    grid: [0.25, 0.25]
+    datadir: '/work/dnash/SEAK_clim_data/downloads/ERA5/'
+    fprefix: "era5_uvq_prs_20180111_20180116"
+    
 case_study_202012:
     data_type: 'reanalysis-era5-pressure-levels'
     var_name: ['geopotential', 'specific_humidity', 'u_component_of_wind', 'v_component_of_wind', 'temperature']

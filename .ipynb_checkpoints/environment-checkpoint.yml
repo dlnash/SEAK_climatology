@@ -18,6 +18,7 @@ dependencies:
   - geopandas
   - pyyaml
   - wrf-python
+  - dask
   
   - pip:
     - boto3
