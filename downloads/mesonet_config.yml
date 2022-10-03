@@ -4,11 +4,150 @@
 
 
 ---
-PAYA:
+
+test:
     start: '201808010000'
-    end: '201808010000'
+    end:   '201808070000'
+    vars: 'air_temp'
+    obstimezone: 'UTC'
+    stids: 'KSEA'
+    units: 'temp|F'
+    token: "6f7bc78232734beab9da77235a2bd351"
+    
+casejan2018:
+    start: '201808010000'
+    end:   '201808070000'
     obtimezone: 'UTC'
     stids: 'PAYA'
     token: "6f7bc78232734beab9da77235a2bd351"
+    
+casedec2020:
+    start: '202011280000'
+    end:   '202012040000'
+    obtimezone: 'UTC'
+    stids: 'PAYA'
+    token: "6f7bc78232734beab9da77235a2bd351"
+    
+
+stationids:
+    klukwan1:
+        location: 'Klukwan'
+        stn_name: 'Glacier Creek Vall'
+        stn_code: 'GCVA2'
+    
+    klukwan2:
+        location: 'Klukwan'
+        stn_name: 'Glacier Creek Ridge'
+        stn_code: 'GRWA2'
+        
+    klukwan3:
+        location: 'Klukwan'
+        stn_name: 'Chillkat FAA Web'
+        stn_code: 'QCHWC'
+        
+    klukwan4:
+        location: 'Klukwan'
+        stn_name: 'Chillkat River Near'
+        stn_code: 'CKTA2'
+    
+    klukwan5:
+        location: 'Klukwan'
+        stn_name: 'Sheep Camp'
+        stn_code: 'SPCA2'
+        
+    klukwan6:
+        location: 'Klukwan'
+        stn_name: 'Dyea'
+        stn_code: 'DWSA2'
+        
+    klukwan7:
+        location: 'Klukwan'
+        stn_name: 'Taiya River Near S'
+        stn_code: 'TYAA2'
+        
+    skagway1:
+        location: 'Skagway'
+        stn_name: 'Skagway'
+        stn_code: 'PAGY'
+        
+    skagway2:
+        location: 'Skagway'
+        stn_name: 'Skagway Airport'
+        stn_code: 'SKTA2'
+        
+    skagway3:
+        location: 'Skagway'
+        stn_name: 'Skagway WX'
+        stn_code: 'SKXA2'
+        
+    skagway4:
+        location: 'Skagway'
+        stn_name: 'Eldred Rock FAA We'
+        stn_code: 'EROWC'
+        
+    skagway5:
+        location: 'Skagway'
+        stn_name: 'Berners Bay'
+        stn_code: 'BEBE2'
+        
+    skagway6:
+        location: 'Skagway'
+        stn_name: 'Little Island'
+        stn_code: 'LIXA2'
+        
+    haines1:
+        location: 'Haines'
+        stn_name: 'Haines Airport'
+        stn_code: 'PAHN'
+        
+    haines2:
+        location: 'Haines'
+        stn_name: 'Haines'
+        stn_code: 'HAXA2'
+        
+    yakutat1: 
+        location: 'Yakutat'
+        stn_name: 'Yakutat'
+        stn_code: 'YATA2'
+        
+    yakutat2: 
+        location: 'Yakutat'
+        stn_name: 'Yakutat Airport'
+        stn_code: 'PAYA'
+        
+    yakutat3: 
+        location: 'Yakutat'
+        stn_name: 'USCRN Site at TONG'
+        stn_code: 'YUTA2'
+        
+    craig1: 
+        location: 'Craig'
+        stn_name: 'Craig'
+        stn_code: 'CRGA2'
+        
+    kasaan1: 
+        location: 'Kasaan'
+        stn_name: 'Kasan FAA Web'
+        stn_code: 'KXAWC'
+        
+    hoonah1: 
+        location: 'Hoonah'
+        stn_name: 'Hoonah'
+        stn_code: 'HONA2'
+        
+    hoonah2: 
+        location: 'Hoonah'
+        stn_name: 'Site TKEWC'
+        stn_code: 'TKEWC'
+        
+    hoonah3: 
+        location: 'Hoonah'
+        stn_name: 'Tenakee Springs'
+        stn_code: 'TKEA2'
+        
+    
+        
+        
+        
     
 ...
