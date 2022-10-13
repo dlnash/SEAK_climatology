@@ -19,6 +19,7 @@ dependencies:
   - pyyaml
   - wrf-python
   - dask
+  - requests>=2.4.2
   
   - pip:
     - boto3
