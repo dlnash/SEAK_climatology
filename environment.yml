@@ -20,6 +20,7 @@ dependencies:
   - wrf-python
   - dask
   - requests>=2.4.2
+  - awscli
   
   - pip:
     - boto3
