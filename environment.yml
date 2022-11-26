@@ -20,6 +20,7 @@ dependencies:
   - wrf-python
   - dask
   - requests>=2.4.2
+  - rasterio
   
   - pip:
     - boto3

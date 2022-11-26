@@ -11,7 +11,7 @@ import xarray as xr
 
 
 def preprocess_PCPT(filenames):
-    """preprocess_prec from AK WRF data
+    """preprocess_prec from SEAK WRF data
     
     Returns a ds object (xarray) including the ACCUMULATED TOTAL GRID SCALE PRECIPITATION (mm)
     
@@ -31,11 +31,12 @@ def preprocess_PCPT(filenames):
     da_time = []
 
     for i, wrfin in enumerate(filenames):
+        
         f = xr.open_dataset(wrfin)
 
         # get lats and lons
-        wrflats = f['XLAT'].isel(west_east=0).values
-        wrflons = f['XLONG'].isel(south_north=0).values
+        wrflats = f['lat'].isel(west_east=0).values
+        wrflons = f['lon'].isel(south_north=0).values
          # extract the data we need
         pcpt  = f['PCPT'].values
 
