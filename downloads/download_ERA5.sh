@@ -20,7 +20,9 @@ array=(
 # prec_case_202012 # hourly precip dec 1-3, 2020
 # case_study_202011 # hourly pressure level data, nov 28-30, 2020
 # prec_case_202011 # hourly precip nov 28-30, 2020
-case_study_201801 # hourly pressure level data jan 11-16, 2018
+# case_study_201801 # hourly pressure level data jan 11-16, 2018
+mslp # hourly mslp for entire clim
+huv # hourly huv data at 850, 500, and 250 hPa for entire clim
 )
 
 # now loop through each configuration dictionary to download the ERA5 data

@@ -4,6 +4,34 @@
 # for use in conjunction with getERA5_batch.py and download_ERA5.sh
 
 ---
+mslp:
+    data_type: 'reanalysis-era5-single-levels'
+    levels: None
+    var_name: ['mean_sea_level_pressure']
+    start_yr: 1979
+    end_yr: 2019
+    month: ['01','02','03','04','05','06','07','08','09','10','11','12']
+    day: ['01','02','03','04','05','06', '07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31']
+    time: ['00:00', '06:00', '12:00', '18:00']
+    area: [40, -175, 75, -120] # [N,W,S,E] Default: global
+    grid: [0.25, 0.25]
+    datadir: '/cw3e/mead/projects/cwp140/scratch/dnash/data/downloads/ERA5/mslp/6hr/'
+    fprefix: "era5_ak_025dg_6hr_mslp"
+ 
+huv:
+    data_type: 'reanalysis-era5-pressure-levels'
+    var_name: ['geopotential', 'u_component_of_wind', 'v_component_of_wind']
+    levels: ['850', '500', '250']
+    start_yr: 1979
+    end_yr: 2019
+    month: ['01','02','03','04','05','06','07','08','09','10','11','12']
+    day: ['01','02','03','04','05','06', '07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31']
+    time: ['00:00', '06:00', '12:00', '18:00']
+    area: [40, -175, 75, -120] # [N,W,S,E] Default: global
+    grid: [0.25, 0.25]
+    datadir: '/cw3e/mead/projects/cwp140/scratch/dnash/data/downloads/ERA5/huv/6hr/'
+    fprefix: "era5_ak_025dg_6hr_huv"
+    
 case_study_201801:
     data_type: 'reanalysis-era5-pressure-levels'
     var_name: ['geopotential', 'specific_humidity', 'u_component_of_wind', 'v_component_of_wind', 'temperature']
