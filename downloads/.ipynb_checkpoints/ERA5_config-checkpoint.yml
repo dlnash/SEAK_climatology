@@ -6,7 +6,7 @@
 ---
 mslp:
     data_type: 'reanalysis-era5-single-levels'
-    levels: None
+    levels:
     var_name: ['mean_sea_level_pressure']
     start_yr: 1979
     end_yr: 2019
