@@ -32,8 +32,8 @@ path_to_out = '/cw3e/mead/projects/cwp140/scratch/dnash/data/preprocessed/SEAK-W
 output_varname = 'PCPT'
 
 ### START PROGRAM ###
-start_yr = 1980
-end_yr = 2019
+start_yr = 2019
+end_yr = 2020
 
 ## Loop through all above years
 for year in np.arange(start_yr, end_yr+1):
