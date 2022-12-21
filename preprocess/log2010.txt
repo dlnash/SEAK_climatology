@@ -1,3 +1,0 @@
-Reading  2010
-Processing  Hoonah
-Writing  Hoonah 2010 to csv

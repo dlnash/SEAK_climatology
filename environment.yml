@@ -18,6 +18,7 @@ dependencies:
   - geopandas
   - pyyaml
   - dask
+  - metpy
   
   - pip:
     - rasterio
