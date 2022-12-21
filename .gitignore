@@ -1,0 +1,11 @@
+# ignore all png and mp4 files (users can save plots and other output locally, but output files should not be uploaded to shared repository)
+
+*.mp4
+*.nc
+
+# ignore juypter checkpoint files
+.ipynb_checkpoints
+
+## ignore data folder
+
+/data/*
