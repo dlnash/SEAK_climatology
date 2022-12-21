@@ -29,7 +29,7 @@ option = 'a'
 temporal_res = 'hourly'
 
 ### set the years you are processing
-start_yr = 1979
+start_yr = 1980
 end_yr = 2020
 
 ### TODO: make a yaml dict
@@ -116,6 +116,6 @@ for i, community in enumerate(lbl1):
         df_lst.append(df)
     # stack the DataFrames
     df_concat = pd.concat(df_lst, ignore_index=True, axis=0)
-    df_concat = df_concat.drop(['Unnamed: 0'], axis=1)
+    # df_concat = df_concat.drop(['Unnamed: 0'], axis=1)
     # save the new df to single csv file for each community
     df_concat.to_csv(path_to_out + 'IVT_ERA5_{0}.csv'.format(community))
