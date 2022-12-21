@@ -13,6 +13,26 @@ from scipy.stats import ttest_1samp, t, pearsonr
 
 # Define functions
 
+def select_months_ds(ds, mon_s, mon_e):    
+    # Select months from xarray dataset
+    if mon_s > mon_e:
+        idx = (ds.time.dt.month >= mon_s) | (ds.time.dt.month <= mon_e)
+    else:
+        idx = (ds.time.dt.month >= mon_s) & (ds.time.dt.month <= mon_e)
+    ds = ds.sel(time=idx)
+    return ds
+
+def select_months(df, mon_s, mon_e):
+    # Select months from pandas dataframe
+    if mon_s > mon_e:
+        idx = (df.index.month >= mon_s) | (df.index.month <= mon_e)
+    else:
+        idx = (df.index.month >= mon_s) & (df.index.month <= mon_e)
+
+    df = df.loc[idx]
+    
+    return df 
+
 def persistence(x):
     """A function that tags persistent events
     
@@ -131,17 +151,6 @@ def transition_matrix(x, states):
     
     return transc, probs
 
-
-def select_months(df, mon_s, mon_e):
-    # Select months
-    if mon_s > mon_e:
-        idx = (df.index.month >= mon_s) | (df.index.month <= mon_e)
-    else:
-        idx = (df.index.month >= mon_s) & (df.index.month <= mon_e)
-
-    df = df.loc[idx]
-    
-    return df 
 
 def create_list_all_dates(start_date, end_date, date_lst):
     """
