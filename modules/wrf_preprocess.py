@@ -26,45 +26,34 @@ def preprocess_PCPT(filenames):
         includes variables PCPT "ACCUMULATED TOTAL GRID SCALE PRECIPITATION" (mm)
     
     """
-    # arrays to append data
-    prec_final = []
-    da_time = []
+    # empty list to append datasets
+    ds_lst = []
 
     for i, wrfin in enumerate(filenames):
-        
+        # open each file
         f = xr.open_dataset(wrfin)
 
-        # get lats and lons
-        wrflats = f['lat'].isel(west_east=0).values
-        wrflons = f['lon'].isel(south_north=0).values
-         # extract the data we need
-        pcpt  = f['PCPT'].values
+        # start with fixing times
+        f = f.assign(Time=f.time.values)
+        f = f.drop(['time']) # drop time variable
+        f = f.rename({'Time':'time'})
 
-        # get time steps from this file
-        da_time.append(f.time.values)
+        # now let's fix coordinates
+        f = f.assign_coords(lat=f.coords['XLAT'], lon=f.coords['XLONG']) # reassign lat and lon as coords
+        f = f.rename({'south_north':'y', 'west_east':'x'}) # rename coords to be cf-compliant
+        f = f.drop(['XLAT', 'XLONG']) # drop XLAT and XLONG coords
 
-        # put values into preassigned arrays
-        prec_final.append(pcpt)
+        # drop all other vars except precip
+        varlst = list(f.keys())
+        varlst.remove('PCPT')
+        f = f.drop(varlst)
+        f = f.drop(['interp_levels'])
+        
+        ds_lst.append(f)
 
         f.close()
 
-    # merge array of dates
-    dates = np.concatenate(da_time, axis=0)
-    
-    # stack prec arrays
-    prec_array = np.concatenate(prec_final, axis=0)
-
-    # convert lats/lons to 4-byte floats (this alleviates striping issue)
-    wrflats = np.float32(wrflats)
-    wrflons = np.float32(wrflons)
-
-    # put into a dataset
-    var_dict = {'prec': (['time', 'lat', 'lon'], prec_array)}
-    ds = xr.Dataset(var_dict,
-                    coords={'time': (['time'], dates),
-                            'lat': (['lat'], wrflats),
-                            'lon': (['lon'], wrflons)})
-    
-    ds.prec.attrs['units'] = 'mm'
+    # concatenate datasets
+    ds = xr.concat(ds_lst, dim='time')
 
     return ds
