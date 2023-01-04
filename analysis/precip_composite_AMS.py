@@ -98,6 +98,7 @@ for i, community in enumerate(community_lst):
     # reset the index as "time"
     ivt_df = ivt_df.set_index(pd.to_datetime(ivt_df['time']))
     
+    
     ## select the 00, 06, 12, and 18 hour timesteps
     idx = (ivt_df.index.hour == 0) | (ivt_df.index.hour == 6) | (ivt_df.index.hour == 12) | (ivt_df.index.hour == 18)
     ivt_df = ivt_df.loc[idx]
@@ -125,7 +126,11 @@ ds_lst = []
 for i, ar_dates in enumerate(ardate_lst):
     print('Processing {0}'.format(community_lst[i]))
     tmp = wrf.sel(time=ar_dates)
-    tmp = tmp.mean('time')
+    
+    if temporal_res == 'hourly':
+        tmp = tmp.mean('time')
+    elif temporal_res == 'daily':
+        tmp = tmp.sum('time')
     ds_lst.append(tmp.load())
 
 ## Plot figures
@@ -166,8 +171,12 @@ for i, ds in enumerate(ds_lst):
         # Contour Filled
         prec = ds.prec.values
         print(np.nanmax(prec))
+        if temporal_res == 'hourly':
+            clevs = np.arange(0.1, 2.2, 0.1)
+        elif temporal_res == 'daily':
+            clevs = np.arange(0.1, 275, 25)
         cf = ax.contourf(lons, lats, prec, transform=datacrs,
-                         levels=np.arange(0.1, 2.2, 0.1), cmap=nclc.cmap('WhiteBlueGreenYellowRed'), alpha=0.9, extend='max')
+                         levels=clevs, cmap=nclc.cmap('WhiteBlueGreenYellowRed'), alpha=0.9, extend='max')
         
         ax.set_title(community, loc='left')
 
