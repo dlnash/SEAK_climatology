@@ -166,7 +166,7 @@ for i, ds in enumerate(ds_lst):
 
 
     for k, ax in enumerate(axgr):
-        ax = draw_basemap(ax, extent=ext1, xticks=dx, yticks=dy,left_lats=True, right_lats=False, mask_ocean=True)
+        ax = draw_basemap(ax, extent=ext1, xticks=dx, yticks=dy,left_lats=True, right_lats=False, mask_ocean=False)
 
         # Contour Filled
         prec = ds.prec.values
