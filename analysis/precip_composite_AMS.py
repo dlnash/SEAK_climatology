@@ -175,7 +175,7 @@ for i, ds in enumerate(ds_lst):
             clevs = np.arange(0.1, 2.2, 0.1)
             clabel = 'precipitation (mm hour$^{-1}$)'
         elif temporal_res == 'daily':
-            clevs = np.arange(0.1, 220, 20)
+            clevs = np.arange(0.1, 165, 15)
             clabel = 'precipitation (mm day$^{-1}$)'
         cf = ax.contourf(lons, lats, prec, transform=datacrs,
                          levels=clevs, cmap=nclc.cmap('WhiteBlueGreenYellowRed'), alpha=0.9, extend='max')
