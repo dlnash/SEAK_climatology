@@ -120,17 +120,17 @@ for i, df in enumerate(df_lst):
 ## load WRF data
 fname_pattern = path_to_work + 'WRFDS_PCPT_*.nc'
 wrf = xr.open_mfdataset(fname_pattern, combine='by_coords')
+if temporal_res == 'hourly':
+        wrf = wrf
+elif temporal_res == 'daily':
+    wrf = wrf.resample(time="1D").sum('time') # resample WRF data to be mm per day
 
 ## make a dataset for each community subset to its AR dates
 ds_lst = []
 for i, ar_dates in enumerate(ardate_lst):
     print('Processing {0}'.format(community_lst[i]))
     tmp = wrf.sel(time=ar_dates)
-    
-    if temporal_res == 'hourly':
-        tmp = tmp.mean('time')
-    elif temporal_res == 'daily':
-        tmp = tmp.sum('time')
+    tmp = tmp.mean('time')
     ds_lst.append(tmp.load())
 
 ## Plot figures
@@ -175,7 +175,7 @@ for i, ds in enumerate(ds_lst):
             clevs = np.arange(0.1, 2.2, 0.1)
             clabel = 'precipitation (mm hour$^{-1}$)'
         elif temporal_res == 'daily':
-            clevs = np.arange(0.1, 1250, 250)
+            clevs = np.arange(0.1, 220, 20)
             clabel = 'precipitation (mm day$^{-1}$)'
         cf = ax.contourf(lons, lats, prec, transform=datacrs,
                          levels=clevs, cmap=nclc.cmap('WhiteBlueGreenYellowRed'), alpha=0.9, extend='max')
