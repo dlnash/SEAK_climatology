@@ -76,7 +76,7 @@ for i, community in enumerate(community_lst):
     elif temporal_res == 'daily':
         ivt_df.index = ivt_df['time']
         ivt_df = ivt_df.set_index(pd.to_datetime(ivt_df['time'])) # reset the index as "date" 
-        ivt_df = ivt_df.resample('1D').mean()
+        ivt_df = ivt_df.resample('1D').mean(numeric_only=True)
         ivt_df = ivt_df.reset_index() # remove the index
     
     ## append AR data
@@ -173,8 +173,10 @@ for i, ds in enumerate(ds_lst):
         print(np.nanmax(prec))
         if temporal_res == 'hourly':
             clevs = np.arange(0.1, 2.2, 0.1)
+            clabel = 'precipitation (mm hour$^{-1}$)'
         elif temporal_res == 'daily':
-            clevs = np.arange(0.1, 275, 25)
+            clevs = np.arange(0.1, 1250, 250)
+            clabel = 'precipitation (mm day$^{-1}$)'
         cf = ax.contourf(lons, lats, prec, transform=datacrs,
                          levels=clevs, cmap=nclc.cmap('WhiteBlueGreenYellowRed'), alpha=0.9, extend='max')
         
@@ -183,7 +185,7 @@ for i, ds in enumerate(ds_lst):
 
     # Colorbar (single)
     cb = fig.colorbar(cf, axgr.cbar_axes[0], orientation='horizontal', drawedges=False)
-    cb.set_label('precipitation (mm hour$^{-1}$)', fontsize=11)
+    cb.set_label(clabel, fontsize=11)
     cb.ax.tick_params(labelsize=12)
 
     fig.savefig('%s.%s' %(fname, fmt), bbox_inches='tight', dpi=fig.dpi)
