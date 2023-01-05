@@ -3,7 +3,7 @@
 # Filename:    download_ERA5.sh
 # Author:      Deanna Nash dlnash@ucsb.edu
 # Description: Script to download all the necessary ERA5 files
-#
+# To run, activate conda env with "conda activate cds", then run the script with "bash download_ERA5.sh"
 ######################################################################
 
 ### Activate python
@@ -23,6 +23,7 @@ array=(
 # case_study_201801 # hourly pressure level data jan 11-16, 2018
 # mslp # hourly mslp for entire clim
 huv # hourly huv data at 850, 500, and 250 hPa for entire clim
+mslp # 6hourly mslp data
 )
 
 # now loop through each configuration dictionary to download the ERA5 data
