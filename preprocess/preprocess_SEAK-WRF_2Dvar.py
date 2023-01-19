@@ -29,8 +29,8 @@ path_to_out = '/cw3e/mead/projects/cwp140/scratch/dnash/data/preprocessed/' # sa
 ### Input ###
 
 ### Variable to Process ###
-output_varname = 'PCPT' # precip
-# output_varname = 'T2' # 2M Temperature
+# output_varname = 'PCPT' # precip
+output_varname = 'T2' # 2M Temperature
 
 
 

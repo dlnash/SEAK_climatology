@@ -12,7 +12,7 @@ source /home/dnash/miniconda3/etc/profile.d/conda.sh
 
 ### Activate conda env
 
-conda activate cds
+# conda activate cds
 
 # names of configuration dictionaries to loop through
 array=(
