@@ -423,4 +423,4 @@ def AR_rank(df):
     else: 
         rank = prelim_rank
         
-    return rank
+    return max_IVT, rank
