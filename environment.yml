@@ -19,6 +19,7 @@ dependencies:
   - pyyaml
   - dask
   - metpy
+  - xoak
   
   - pip:
     - rasterio
