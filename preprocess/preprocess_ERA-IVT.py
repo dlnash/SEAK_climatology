@@ -84,7 +84,7 @@ def generate_IVT_tseries(era, xs, ys, community_lst, option, year):
                 "vIVT": vvec,
                 "IWV": iwv_vals}
             df = pd.DataFrame(data=d)
-            
+        
         print('Writing ', community, year, 'to csv')
         ## save to csv file
         df.to_csv(path_to_work + '{0}_IVT_{1}.csv'.format(community, year))
