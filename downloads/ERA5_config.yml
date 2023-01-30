@@ -29,8 +29,8 @@ ivt:
     time: ['00:00', '06:00', '12:00', '18:00']
     area: [19, -180, 80, -110] # [N,W,S,E] Default: global
     grid: [0.25, 0.25]
-    datadir: '/cw3e/mead/projects/cwp140/scratch/dnash/data/downloads/ERA5/mslp/6hr/'
-    fprefix: "era5_ak_025dg_6hr_mslp"
+    datadir: '/cw3e/mead/projects/cwp140/scratch/dnash/data/downloads/ERA5/ivt/6hr/'
+    fprefix: "era5_ak_025dg_6hr_ivt"
  
 huv:
     data_type: 'reanalysis-era5-pressure-levels'
