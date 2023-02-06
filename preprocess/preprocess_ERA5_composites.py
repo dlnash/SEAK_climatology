@@ -38,20 +38,19 @@ for i, df in enumerate(df_lst):
     ar_dates = tmp.time.values
     ardate_lst.append(tmp.time.values)
 
-## load 250Z data
-varname = 'huv'
-output_varname = '250Z'
-drop_var = ['u', 'v']
-lev = 250.
-rename_var = {'latitude':'lat', 'longitude':'lon'}
+# ## load 250Z data
+# varname = 'huv'
+# output_varname = '250Z'
+# drop_var = ['u', 'v']
+# lev = 250.
+# rename_var = {'latitude':'lat', 'longitude':'lon'}
 
-## load MSLP data
-varname = 'mslp'
-output_varname = 'mslp'
-drop_var = None
-lev = None
-rename_var = {'latitude':'lat', 'longitude':'lon'}
-
+# ## load MSLP data
+# varname = 'mslp'
+# output_varname = 'mslp'
+# drop_var = None
+# lev = None
+# rename_var = {'latitude':'lat', 'longitude':'lon'}
 
 ## load IVT data
 varname = 'ivt'
@@ -61,15 +60,33 @@ lev = None
 rename_var = {'latitude':'lat', 'longitude':'lon', 'p71.162': 'IVTu', 'p72.162': 'IVTv'}
 
 
-def preprocess(ds):
+def preprocess_huv(ds):
     '''keep only selected variable and level'''
     ds = ds.drop(drop_var)
     ds = ds.sel(level=lev)
     ds = ds.rename(rename_var)
     return ds
 
+def preprocess_mslp(ds):
+    '''keep only selected variable and level'''
+    ds = ds.rename(rename_var)
+    return ds
+
+def preprocess_ivt(ds):
+    '''keep only selected variable and level'''
+    ds = ds.rename(rename_var)
+    return ds
+
 fname_pattern = path_to_data + 'downloads/ERA5/{0}/6hr/era5_ak_025dg_6hr_{0}_*.nc'.format(varname)
-era = xr.open_mfdataset(fname_pattern, combine='by_coords', preprocess=preprocess)
+if varname == 'huv':
+    era = xr.open_mfdataset(fname_pattern, combine='by_coords', preprocess=preprocess_huv)
+elif varname == 'mslp':
+    era = xr.open_mfdataset(fname_pattern, combine='by_coords', preprocess=preprocess_mslp)
+elif varname == 'ivt':
+    era = xr.open_mfdataset(fname_pattern, combine='by_coords', preprocess=preprocess_ivt)
+    era = era.assign(IVT=lambda era: np.sqrt(era.IVTu**2 + era.IVTv**2))
+    
+    
 if temporal_res == 'hourly':
     era = era
 elif temporal_res == 'daily':
