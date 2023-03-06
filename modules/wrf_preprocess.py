@@ -129,3 +129,34 @@ def preprocess_2Dvar_new(filenames, varname):
     ds.attrs = attributes
 
     return ds
+
+def lag_and_combine(ds, lags, dim="time"):
+    """
+    Adapted from: https://github.com/jbusecke/xarrayutils/blob/master/xarrayutils/utils.py
+    Creates lagged versions of the input object,
+    combined along new `lag` dimension.
+    NOTE: Lagging produces missing values at boundary. Use `.fillna(...)`
+    to avoid problems with e.g. xr_linregress.
+    Parameters
+    ----------
+    ds : {xr.DataArray, xr.Dataset}
+        Input object
+    lags : np.Array
+        Lags to be computed and combined. Values denote number of timesteps.
+        Negative lag indicates a shift backwards (to the left of the axis).
+    dim : str
+        dimension of `ds` to be lagged
+    Returns
+    -------
+    {xr.DataArray, xr.Dataset}
+        Lagged version of `ds` with additional dimension `lag`
+    """
+
+    datasets = []
+    for ll in lags:
+        datasets.append(ds.shift(**{dim: ll}))
+        
+    final = xr.concat(datasets, dim=lags)
+    final = final.rename({'concat_dim':'lag'}) # rename concat_dim to lag
+    
+    return final
