@@ -11,6 +11,7 @@ from metpy.units import units
 # import personal modules
 sys.path.append('../modules') # Path to modules
 from preprocess_dataframes import combine_ivt_ar_prec_df
+from wrf_preprocess import lag_and_combine
 
 # Set up paths
 
@@ -24,6 +25,7 @@ path_to_figs = '../figs/'      # figures
 option = 'a'
 temporal_res = 'daily'
 community_lst = ['Hoonah', 'Skagway', 'Klukwan', 'Yakutat', 'Craig', 'Kasaan']
+lag_lst = [-4, -3, -2, -1, 0]
 
 df_lst = combine_ivt_ar_prec_df(option, temporal_res, community_lst) # combine dfs into list of dfs
 
@@ -38,68 +40,62 @@ for i, df in enumerate(df_lst):
     ar_dates = tmp.time.values
     ardate_lst.append(tmp.time.values)
 
-# ## load 250Z data
-# varname = 'huv'
-# output_varname = '250Z'
-# drop_var = ['u', 'v']
-# lev = 250.
-# rename_var = {'latitude':'lat', 'longitude':'lon'}
-
-# ## load MSLP data
-# varname = 'mslp'
-# output_varname = 'mslp'
-# drop_var = None
-# lev = None
-# rename_var = {'latitude':'lat', 'longitude':'lon'}
-
-## load IVT data
-varname = 'ivt'
-output_varname = 'ivt'
-drop_var = None
-lev = None
-rename_var = {'latitude':'lat', 'longitude':'lon', 'p71.162': 'IVTu', 'p72.162': 'IVTv'}
-
+varname_lst = ['huv', 'ivt', 'mslp']
 
 def preprocess_huv(ds):
     '''keep only selected variable and level'''
-    ds = ds.drop(drop_var)
-    ds = ds.sel(level=lev)
-    ds = ds.rename(rename_var)
+    ds = ds.drop(['u', 'v'])
+    ds = ds.sel(level=250.)
+    ds = ds.rename({'latitude':'lat', 'longitude':'lon'})
     return ds
 
 def preprocess_mslp(ds):
     '''keep only selected variable and level'''
-    ds = ds.rename(rename_var)
+    ds = ds.rename({'latitude':'lat', 'longitude':'lon'})
     return ds
 
 def preprocess_ivt(ds):
     '''keep only selected variable and level'''
-    ds = ds.rename(rename_var)
+    ds = ds.rename({'latitude':'lat', 'longitude':'lon', 'p71.162': 'IVTu', 'p72.162': 'IVTv'})
     return ds
 
-fname_pattern = path_to_data + 'downloads/ERA5/{0}/6hr/era5_ak_025dg_6hr_{0}_*.nc'.format(varname)
-if varname == 'huv':
-    era = xr.open_mfdataset(fname_pattern, combine='by_coords', preprocess=preprocess_huv)
-elif varname == 'mslp':
-    era = xr.open_mfdataset(fname_pattern, combine='by_coords', preprocess=preprocess_mslp)
-elif varname == 'ivt':
-    era = xr.open_mfdataset(fname_pattern, combine='by_coords', preprocess=preprocess_ivt)
-    era = era.assign(IVT=lambda era: np.sqrt(era.IVTu**2 + era.IVTv**2))
+ds_final = []
+for i, varname in enumerate(varname_lst):
+    print('Reading ...', varname)
+    fname_pattern = path_to_data + 'downloads/ERA5/{0}/6hr/era5_ak_025dg_6hr_{0}_*.nc'.format(varname)
+    if varname == 'huv':
+        era = xr.open_mfdataset(fname_pattern, combine='by_coords', preprocess=preprocess_huv)
+    elif varname == 'mslp':
+        era = xr.open_mfdataset(fname_pattern, combine='by_coords', preprocess=preprocess_mslp)
+    elif varname == 'ivt':
+        era = xr.open_mfdataset(fname_pattern, combine='by_coords', preprocess=preprocess_ivt)
+        era = era.assign(IVT=lambda era: np.sqrt(era.IVTu**2 + era.IVTv**2))
+
+
+    if temporal_res == 'hourly':
+        era = era
+    elif temporal_res == 'daily':
+        era = era.resample(time="1D").mean('time') # resample daily
+
+    ## create lagged composites
+    era = lag_and_combine(era, lags=lag_lst, dim='time')
+
+    ## make a dataset for each community subset to its AR dates
+    ds_lst = []
+    for i, ar_dates in enumerate(ardate_lst):
+        print('Processing {0}'.format(community_lst[i]))
+        tmp = era.sel(time=ar_dates)
+        tmp = tmp.mean('time')
+        tmp = tmp.load()
+        ds_lst.append(tmp) # append to list
+
+    ## merge all communities into single DS with "community name" as axis
+    ds_comp = xr.concat(ds_lst, dim=community_lst)
+    ds_comp = ds_comp.rename({'concat_dim':'community'}) # rename concat_dim to community
+    ds_final.append(ds_comp)
     
-    
-if temporal_res == 'hourly':
-    era = era
-elif temporal_res == 'daily':
-    era = era.resample(time="1D").mean('time') # resample daily
-    
-## make a dataset for each community subset to its AR dates
-ds_lst = []
-for i, ar_dates in enumerate(ardate_lst):
-    print('Processing {0}'.format(community_lst[i]))
-    tmp = era.sel(time=ar_dates)
-    tmp = tmp.mean('time')
-    tmp = tmp.load()
-    
-    # write to netCDF
-    fname = os.path.join(path_to_data, 'preprocessed/ERA5_{0}_daily_{1}.nc'.format(output_varname, community_lst[i]))
-    tmp.to_netcdf(path=fname, mode = 'w', format='NETCDF4')
+ds_write = xr.combine_by_coords(ds_final)
+
+# write to netCDF
+fname = os.path.join(path_to_data, 'preprocessed/ERA5_ivt_250z_mslp_daily_composite.nc')
+ds_write.to_netcdf(path=fname, mode = 'w', format='NETCDF4')
