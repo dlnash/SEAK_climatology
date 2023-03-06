@@ -75,14 +75,14 @@ def combine_ivt_ar_prec_df(option, temporal_res, community_lst):
         
     return df_lst
     
-def precipitation_annual_clim(df_lst, community_lst):
+def df_annual_clim(df_lst, community_lst, varname='prec'):
     '''
-    Returns list of dataframes (based on community_lst) that has the annual climatology for precipitation
+    Returns list of dataframes (based on community_lst) that has the annual climatology for precipitation/IVT
     
     Parameters
     ----------
     list : list of pandas dataframes
-        list of daily or hourly pandas dataframes with precipitation data
+        list of daily or hourly pandas dataframes with precipitation/IVT data
         
     community_lst : list
         list of strings of community names
@@ -90,25 +90,81 @@ def precipitation_annual_clim(df_lst, community_lst):
     Returns
     -------
     df : pandas dataframe
-        df that has annual climatology of precipitation for each community
+        df that has annual climatology of precipitation/IVT for each community
 
     '''
-    prec_clim_lst = []    
+    clim_mean_lst = []
+    clim_std_lst = []
     for i, df in enumerate(df_lst):
         community = community_lst[i]
         # reset the index as "time"
         df = df.set_index(pd.to_datetime(df['time']))
 
         # create day of year column
-        df['day_of_year'] = df.index.dayofyear
+        df['month'] = df.index.month
+        
+        # get mean
+        clim_mean = df.groupby(['month'])[varname].mean()
+        clim_mean = clim_mean.rename('{0}_{1}'.format(varname, community))
+        clim_mean_lst.append(clim_mean)
+        
+        # get standard deviation
+        clim_std = df.groupby(['month'])[varname].std()
+        clim_std = clim_std.rename('{0}_{1}'.format(varname, community))
+        clim_std_lst.append(clim_std)
+    
+    rename_dict = {'{0}_Hoonah'.format(varname): 'Hoonah',
+                   '{0}_Skagway'.format(varname): 'Skagway',
+                   '{0}_Klukwan'.format(varname): 'Klukwan',
+                   '{0}_Yakutat'.format(varname): 'Yakutat',
+                   '{0}_Craig'.format(varname): 'Craig',
+                   '{0}_Kasaan'.format(varname): 'Kasaan'}
+    clim_mean_final = pd.concat(clim_mean_lst, axis=1)
+    clim_mean_final = clim_mean_final.rename(columns=rename_dict)
+    clim_std_final = pd.concat(clim_std_lst, axis=1)
+    clim_std_final = clim_std_final.rename(columns=rename_dict)
+        
+    return clim_mean_final, clim_std_final
 
-        prec_clim = df.groupby(['day_of_year'])['prec'].mean()
-        prec_clim = prec_clim.rename('prec_{0}'.format(community))
-        prec_clim_lst.append(prec_clim)
+
+def df_AR_annual_clim(df_lst, community_lst, varname='AR'):
+    '''
+    Returns list of dataframes (based on community_lst) that has the annual climatology for AR frequency
+    
+    Parameters
+    ----------
+    list : list of pandas dataframes
+        list of daily or hourly pandas dataframes with AR data
         
-    prec_clim = pd.concat(prec_clim_lst, axis=1)
+    community_lst : list
+        list of strings of community names
+
+    Returns
+    -------
+    df : pandas dataframe
+        df that has annual climatology of AR frequency for each community
+
+    '''
+    clim_mean_lst = []
+
+    for i, df in enumerate(df_lst):
+        community = community_lst[i]
+        # reset the index as "time"
+        df = df.set_index(pd.to_datetime(df['time']))
+
+        # create day of year column
+        df['month'] = df.index.month
         
-    return prec_clim
+        idx = (df.AR > 0)
+        ardates_daily = df.loc[idx] # get only AR dates
+        
+        mon_ar = ardates_daily[varname].resample("M").count()  # count number of ARs per month
+        clim_ct = mon_ar.groupby(mon_ar.index.month).mean() # get average number of ARs per month
+        clim_mean_lst.append(clim_ct)
+        
+    clim_mean_final = pd.concat(clim_mean_lst, axis=1)
+        
+    return clim_mean_final
         
 def calculate_ivt_prec_percentiles(df_lst, community_lst):
     '''
