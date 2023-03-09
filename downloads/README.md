@@ -5,3 +5,21 @@
 conda activate cds
 bash download_ERA5.sh
 ```
+
+2. Download southeast Alaska WRF data from Lader et al., 2020
+
+You will need awscli installed on your machine.
+
+```
+# in download directory
+bash download_SEAK-WRF.sh
+```
+
+3. Download the AR detection result
+
+Navigate to [https://dataverse.ucla.edu/dataverse/ar](https://dataverse.ucla.edu/dataverse/ar) and select 'globalARcatalog_ERA-Interim_1979-2019_v3.0.nc' to download. You will need to provide information regarding the use of this dataset. 
+
+4. Download the Global Multi-resolution Terrain Elevation Data 2010 7.5 arc-second data
+
+Navigate and login to Earth Explorer [https://earthexplorer.usgs.gov/](https://earthexplorer.usgs.gov/). Select the "Data Sets" tab and type in "GMTED2010" in the "Data Set Search" box. From the drop-down box, select GMTED2010. Next, select the "Additional Criteria" tab and click the + icon by Entity ID. Type "GMTED2010N50W150" into the box. Select the Results >> button and wait for the results to load. The correct tile should show up in the results and can be confirmed by clicking the footprint icon. To download, select the icon with the green down arrow and then select the Download button under the "7.5 ARC SEC (711.85 MiB)" download option.
+

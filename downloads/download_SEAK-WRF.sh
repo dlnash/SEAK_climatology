@@ -24,7 +24,7 @@ PATH_TO_OUT='/work/dnash/SEAK_clim_data/downloads/wrf-AK/'
 aws s3 cp s3://wrf-se-ak-ar5/cfsr/4km/hourly/ ${PATH_TO_OUT} --recursive --no-sign-request
 
 ### If interrupted during copy, then use sync command to download remaining files
-aws s3 sync s3://wrf-se-ak-ar5/cfsr/4km/hourly/ ${PATH_TO_OUT} --no-sign-request
+# aws s3 sync s3://wrf-se-ak-ar5/cfsr/4km/hourly/ ${PATH_TO_OUT} --no-sign-request
 
 
 

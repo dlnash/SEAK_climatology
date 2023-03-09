@@ -21,7 +21,7 @@ import pandas as pd
 import matplotlib.gridspec as gridspec
 import seaborn as sns
 
-def draw_basemap(ax, datacrs=ccrs.PlateCarree(), extent=None, xticks=None, yticks=None, grid=False, left_lats=True, right_lats=False, bottom_lons=True, mask_ocean=False):
+def draw_basemap(ax, datacrs=ccrs.PlateCarree(), extent=None, xticks=None, yticks=None, grid=False, left_lats=True, right_lats=False, bottom_lons=True, mask_ocean=False, coastline=True):
     """
     Creates and returns a background map on which to plot data. 
     
@@ -82,7 +82,8 @@ def draw_basemap(ax, datacrs=ccrs.PlateCarree(), extent=None, xticks=None, ytick
     # Add map features (continents and country borders)
     ax.add_feature(cfeature.LAND, facecolor='0.9')      
     ax.add_feature(cfeature.BORDERS, edgecolor='0.4', linewidth=0.8)
-    ax.add_feature(cfeature.COASTLINE, edgecolor='0.4', linewidth=0.8)
+    if coastline == True:
+        ax.add_feature(cfeature.COASTLINE, edgecolor='0.4', linewidth=0.8)
     if mask_ocean == True:
         ax.add_feature(cfeature.OCEAN, edgecolor='0.4', zorder=12, facecolor='white') # mask ocean
         
