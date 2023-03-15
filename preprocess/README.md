@@ -21,7 +21,14 @@ This script generates a .csv 6-hourly and daily time series of days an AR makes 
 Combines the precipitation, IVT, and AR time series .csv files
 Generates average composites for all ERA5 variables for each community at different time lags for >95th percentile precipitation AR days
 
-6. preprocess_SEAK-WRF_composites.py
+6. preprocess_ERA5_special.py
+Combines the precipitation, IVT, and AR time series .csv files
+Generates average composites for all ERA5 variables for all communities for:
+a) >95th percentile IVT AR days, <5th percentile precipitation AR days
+b) >95th percentile precipitation AR days
+c) >95th percentile IVT AR days, >95th percentile precipitation AR days
+
+7. preprocess_SEAK-WRF_composites.py
 
 Combines the precipitation, IVT, and AR time series .csv files
 Generates average composites for precipitation for each community at different time lags for >95th percentile precipitation AR days
