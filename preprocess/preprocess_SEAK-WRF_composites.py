@@ -16,7 +16,6 @@ from wrf_preprocess import lag_and_combine
 # Set up paths
 
 path_to_data = '/cw3e/mead/projects/cwp140/scratch/dnash/data/'      # project data -- read only
-path_to_work = '/work/dnash/SEAK_clim_data/preprocessed/SEAK-WRF-PCPT/'
 path_to_out  = '../out/'       # output files (numerical results, intermediate datafiles) -- read & write
 path_to_figs = '../figs/'      # figures
 
@@ -40,7 +39,7 @@ for i, df in enumerate(df_lst):
     ar_dates = tmp.time.values
     ardate_lst.append(tmp.time.values)
 
-fname_pattern = path_to_work + 'WRFDS_PCPT_*.nc'
+fname_pattern = path_to_data + 'preprocessed/SEAK-WRF-PCPT/WRFDS_PCPT_*.nc'
 wrf = xr.open_mfdataset(fname_pattern, combine='by_coords')
 if temporal_res == 'hourly':
     wrf = wrf

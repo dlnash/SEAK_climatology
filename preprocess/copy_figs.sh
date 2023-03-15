@@ -2,7 +2,7 @@
 ######################################################################
 # Filename:    copy_figs.sh
 # Author:      Deanna Nash dlnash@ucsb.edu
-# Description: Script to copy final figures to one folder
+# Description: Script to copy final figures to one folder and save as pdf
 #
 ######################################################################
 
@@ -56,3 +56,6 @@ done
 # #     echo "${infile} to ${outfile}"
 #     cp -v ${infile} ${outfile}
 # done
+
+## convert png to pdf
+python png_to_pdf.py
