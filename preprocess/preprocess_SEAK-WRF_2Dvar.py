@@ -1,7 +1,7 @@
 """
-Filename:    preprocess_SEAK-WRF_2Dvar.py
+Filename:    preprocess_SEAK-WRF.py
 Author:      Deanna Nash, dlnash@ucsb.edu
-Description: preprocess hourly 2D variables from 40 years of SEAK-WRF data and save as yearly nc files
+Description: preprocess hourly variables from 40 years of SEAK-WRF data and save as yearly nc files
 """
 
 ## Imports
@@ -17,7 +17,7 @@ sys.path.append(os.getcwd())
 # Path to modules
 sys.path.append('../modules')
 # Import my modules
-from wrf_preprocess import preprocess_2Dvar_new
+from wrf_preprocess import preprocess_2Dvar, preprocess_UVwind
 
 ## Set up paths
 path_to_wrf = '/cw3e/mead/projects/cwp140/scratch/dnash/data/downloads/SEAK-WRF/' # access raw SEAK-WRF files
@@ -31,8 +31,9 @@ path_to_out = '/cw3e/mead/projects/cwp140/scratch/dnash/data/preprocessed/' # sa
 ### Variable to Process ###
 # output_varname = 'PCPT' # precip
 # output_varname = 'T2' # 2M Temperature
-output_varname = 'SNOW' # Snow Water Equivalent
-
+# output_varname = 'SNOW' # Snow Water Equivalent
+output_varname = 'UV' # uv wind
+levlst = '850' # hPa
 
 
 ### START PROGRAM ###
@@ -52,7 +53,10 @@ for year in np.arange(start_yr, end_yr+1):
     
     ## create new ds with just precip
     print('Reading', output_varname)
-    ds = preprocess_2Dvar_new(filenames, output_varname)
+    if output_varname == 'UV':
+        ds = preprocess_UVwind(filenames, levlst)
+    else:
+        ds = preprocess_2Dvar(filenames, output_varname)
     
     # write to netCDF
     print('Writing', output_varname, ' to netCDF')

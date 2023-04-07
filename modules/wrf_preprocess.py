@@ -10,58 +10,83 @@ import numpy as np
 import xarray as xr
 
 
-def preprocess_2Dvar(filenames, varname):
-    """preprocess 2D var from SEAK WRF data
+def preprocess_UVwind(filenames, levlst):
+    """preprocess 3D var from SEAK WRF data
     
-    Returns a ds object (xarray) including the ACCUMULATED TOTAL GRID SCALE PRECIPITATION (mm)
+    Returns a ds object (xarray) with u and v wind for the selected vertical levels
+    ex: levlst = ['850'] - selects the 850 level 
     
     Parameters
     ----------
     filenames : list
         list of wrf filenames to process
-    varname : str
-        str of 2D varname to process
+    levlst : list
+        list of pressure level to select (available levs: 100.,  200.,  300.,  400.,  500.,  700.,  850.,  925., 1000.)
   
     Returns
     -------
     ds : ds object
-        includes 2D variable requested to preprocess
-        ex: PCPT "ACCUMULATED TOTAL GRID SCALE PRECIPITATION" (mm)
-        ex: T2 "TEMP at 2 M" (K)
+        includes U and V wind at the requested vertical level(s)
     
     """
-    # empty list to append datasets
-    ds_lst = []
+    # arrays to append data
+    u_final = []
+    v_final = []
+    da_time = []
 
     for i, wrfin in enumerate(filenames):
-        # open each file
+        
         f = xr.open_dataset(wrfin)
 
-        # start with fixing times
-        f = f.assign(Time=f.time.values)
-        f = f.drop(['time']) # drop time variable
-        f = f.rename({'Time':'time'})
+        # get lats and lons
+        wrflats = f['lat'].values
+        wrflons = f['lon'].values
+         # extract the data we need
+        udata  = f['U'].sel(interp_levels=levlst).values
+        vdata  = f['V'].sel(interp_levels=levlst).values
 
-        # now let's fix coordinates
-        f = f.assign_coords(lat=f['lat'], lon=f['lon']) # reassign lat and lon as coords
-        f = f.rename({'south_north':'y', 'west_east':'x'}) # rename coords to be cf-compliant
+        # get time steps from this file
+        da_time.append(f.time.values)
 
-        # drop all other vars except precip
-        varlst = list(f.keys())
-        varlst.remove(varname)
-        f = f.drop(varlst)
-        f = f.drop(['interp_levels'])
+        # put values into preassigned arrays
+        u_final.append(udata)
+        v_final.append(vdata)
         
-        ds_lst.append(f)
+        # get units and attributes from original
+        attributes = f.attrs
+        u_attrs = f['U'].attrs
+        v_attrs = f['V'].attrs
 
         f.close()
 
-    # concatenate datasets
-    ds = xr.concat(ds_lst, dim='time')
+    # merge array of dates
+    dates = np.concatenate(da_time, axis=0)
+    
+    # stack prec arrays
+    udata_array = np.concatenate(u_final, axis=0)
+    vdata_array = np.concatenate(v_final, axis=0)
 
+    # convert lats/lons to 4-byte floats (this alleviates striping issue)
+    wrflats = np.float32(wrflats)
+    wrflons = np.float32(wrflons)
+
+    # put into a dataset
+    var_dict = {'U': (['time', 'y', 'x'], udata_array),
+                'V': (['time', 'y', 'x'], vdata_array)}
+    ds = xr.Dataset(var_dict,
+                    coords={'time': (['time'], dates),
+                            'lat': (['y', 'x'], wrflats),
+                            'lon': (['y', 'x'], wrflons)})
+    
+    # set dataset and dataarray attributes
+    ds['U'].attrs = u_attrs
+    ds['V'].attrs = v_attrs
+    ds.attrs = attributes
+    
     return ds
 
-def preprocess_2Dvar_new(filenames, varname):
+
+def preprocess_2Dvar(filenames, varname):
     """preprocess 2D var from SEAK WRF data
     
     Returns a ds object (xarray) including the indicated variable
