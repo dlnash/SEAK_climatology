@@ -71,10 +71,11 @@ def preprocess_UVwind(filenames, levlst):
     wrflons = np.float32(wrflons)
 
     # put into a dataset
-    var_dict = {'U': (['time', 'y', 'x'], udata_array),
-                'V': (['time', 'y', 'x'], vdata_array)}
+    var_dict = {'U': (['time', 'lev', 'y', 'x'], udata_array),
+                'V': (['time', 'lev', 'y', 'x'], vdata_array)}
     ds = xr.Dataset(var_dict,
                     coords={'time': (['time'], dates),
+                            'lev': (['lev'], levlst),
                             'lat': (['y', 'x'], wrflats),
                             'lon': (['y', 'x'], wrflons)})
     
