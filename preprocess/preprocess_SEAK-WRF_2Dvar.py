@@ -33,7 +33,7 @@ path_to_out = '/cw3e/mead/projects/cwp140/scratch/dnash/data/preprocessed/' # sa
 # output_varname = 'T2' # 2M Temperature
 # output_varname = 'SNOW' # Snow Water Equivalent
 output_varname = 'UV' # uv wind
-levlst = '850' # hPa
+levlst = ['1000', '925', '850'] # hPa
 
 
 ### START PROGRAM ###
