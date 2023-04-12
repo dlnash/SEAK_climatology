@@ -24,7 +24,7 @@ path_to_figs = '../figs/'      # figures
 option = 'a'
 temporal_res = 'daily'
 community_lst = ['Hoonah', 'Skagway', 'Klukwan', 'Yakutat', 'Craig', 'Kasaan']
-lag_lst = [-4, -3, -2, -1, 0]
+varname = 'UV' # 'PCPT' or 'UV'
 
 df_lst = combine_ivt_ar_prec_df(option, temporal_res, community_lst) # combine dfs into list of dfs
 
@@ -39,13 +39,16 @@ for i, df in enumerate(df_lst):
     ar_dates = tmp.time.values
     ardate_lst.append(tmp.time.values)
 
-fname_pattern = path_to_data + 'preprocessed/SEAK-WRF-PCPT/WRFDS_PCPT_*.nc'
+fname_pattern = path_to_data + 'preprocessed/SEAK-WRF-{0}/WRFDS_{0}_*.nc'.format(varname)
 wrf = xr.open_mfdataset(fname_pattern, combine='by_coords')
 if temporal_res == 'hourly':
     wrf = wrf
-elif temporal_res == 'daily':
+elif (temporal_res == 'daily') & (varname == 'PCPT'):
     wrf = wrf.resample(time="1D").sum('time') # resample WRF data to be mm per day
-wrf
+    
+elif (temporal_res == 'daily') & (varname == 'UV'):
+    wrf = wrf.resample(time="1D").mean('time') # resample WRF data to be m s-1
+
 
 ## make a dataset for each community subset to its AR dates
 ds_lst = []
@@ -60,5 +63,5 @@ ds_comp = xr.concat(ds_lst, dim=community_lst)
 ds_comp = ds_comp.rename({'concat_dim':'community'}) # rename concat_dim to community
 
 # write to netCDF
-fname = os.path.join(path_to_data, 'preprocessed/SEAK-WRF_PCPT_daily_composite.nc')
+fname = os.path.join(path_to_data, 'preprocessed/SEAK-WRF_{0}_daily_composite.nc'.format(varname)
 ds_comp.to_netcdf(path=fname, mode = 'w', format='NETCDF4')

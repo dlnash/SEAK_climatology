@@ -145,26 +145,40 @@ def df_AR_annual_clim(df_lst, community_lst, varname='AR'):
         df that has annual climatology of AR frequency for each community
 
     '''
-    clim_mean_lst = []
+    clim_mean_final = []
 
     for i, df in enumerate(df_lst):
         community = community_lst[i]
         # reset the index as "time"
         df = df.set_index(pd.to_datetime(df['time']))
 
+        ## make new column that is 0 - non-AR non-extreme, 1 - AR non-extreme, 2 - non-AR extreme, 3 - AR extreme
+        df['extremeAR'] = df['AR']
+        df.loc[(df['AR']==0) & (df['prec_{0}'.format(community)] >=0.95), 'extremeAR'] = 3 # non-AR extreme
+        df.loc[(df['AR']==1) & (df['prec_{0}'.format(community)] >=0.95), 'extremeAR'] = 2 # AR extreme
+
         # create day of year column
         df['month'] = df.index.month
+        prec_type_lst = [1, 2, 3]
+        prec_name_lst = ['AR non-extreme', 'AR extreme', 'non-AR extreme']
+        clim_mean_lst = []
+        for j, prec_type in enumerate(prec_type_lst):
+            idx = (df.extremeAR == prec_type)
+            ardates_daily = df.loc[idx] # get only AR dates
+
+            mon_ar = ardates_daily['extremeAR'].resample("M").count()  # count number of ARs per month
+            clim_ct = mon_ar.groupby(mon_ar.index.month).mean() # get average number of ARs per month
+            clim_ct = clim_ct.rename(prec_name_lst[j])
+            clim_mean_lst.append(clim_ct)
+
+        clim_mean_final.append(pd.concat(clim_mean_lst, axis=1))
         
-        idx = (df.AR > 0)
-        ardates_daily = df.loc[idx] # get only AR dates
+    # concatenate all communities
+    df_concat = pd.concat(clim_mean_final)
+    by_row_index = df_concat.groupby(df_concat.index)
+    df_means = by_row_index.mean()
         
-        mon_ar = ardates_daily[varname].resample("M").count()  # count number of ARs per month
-        clim_ct = mon_ar.groupby(mon_ar.index.month).mean() # get average number of ARs per month
-        clim_mean_lst.append(clim_ct)
-        
-    clim_mean_final = pd.concat(clim_mean_lst, axis=1)
-        
-    return clim_mean_final
+    return df_means
         
 def calculate_ivt_prec_percentiles(df_lst, community_lst):
     '''
