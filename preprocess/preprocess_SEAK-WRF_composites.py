@@ -63,5 +63,5 @@ ds_comp = xr.concat(ds_lst, dim=community_lst)
 ds_comp = ds_comp.rename({'concat_dim':'community'}) # rename concat_dim to community
 
 # write to netCDF
-fname = os.path.join(path_to_data, 'preprocessed/SEAK-WRF_{0}_daily_composite.nc'.format(varname)
+fname = os.path.join(path_to_data, 'preprocessed/SEAK-WRF_{0}_daily_composite.nc'.format(varname))
 ds_comp.to_netcdf(path=fname, mode = 'w', format='NETCDF4')
