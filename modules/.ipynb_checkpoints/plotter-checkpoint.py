@@ -107,8 +107,8 @@ def draw_basemap(ax, datacrs=ccrs.PlateCarree(), extent=None, xticks=None, ytick
         gl.ylocator = mticker.FixedLocator(yticks)
         gl.xformatter = LONGITUDE_FORMATTER
         gl.yformatter = LATITUDE_FORMATTER
-        gl.xlabel_style = {'size': 10, 'color': 'gray'}
-        gl.ylabel_style = {'size': 10, 'color': 'gray'}
+        gl.xlabel_style = {'size': 10, 'color': 'gray', 'fontweight': 'light'}
+        gl.ylabel_style = {'size': 10, 'color': 'gray', 'fontweight': 'light'}
     
     ## Gridlines
     # Draw gridlines if requested

@@ -23,3 +23,11 @@ Navigate to [https://dataverse.ucla.edu/dataverse/ar](https://dataverse.ucla.edu
 
 Navigate and login to Earth Explorer [https://earthexplorer.usgs.gov/](https://earthexplorer.usgs.gov/). Select the "Data Sets" tab and type in "GMTED2010" in the "Data Set Search" box. From the drop-down box, select GMTED2010. Next, select the "Additional Criteria" tab and click the + icon by Entity ID. Type "GMTED2010N50W150" into the box. Select the Results >> button and wait for the results to load. The correct tile should show up in the results and can be confirmed by clicking the footprint icon. To download, select the icon with the green down arrow and then select the Download button under the "7.5 ARC SEC (711.85 MiB)" download option.
 
+5. Download the Anadromous Waters Catalog for Southeast Alaska (Rivers and Streams)
+
+Navigate to the (Alaska Department of Fish and Game)[https://www.adfg.alaska.gov/sf/SARR/AWC/index.cfm?ADFG=maps.dataFiles] 2022 Regulatory AWC GIS data page. Select "Shapefile" for AWC for the Southwestern Region. 
+
+6. Download the Alaska Randolph Glacier Index v6.0
+
+Navigate to the (State of Alaska Geoportal)[https://gis.data.alaska.gov/datasets/81ab2195b29f4ef3ab4cafe565a7c2e0_0/explore?location=59.824584%2C-151.498483%2C5.51] and click "Download" to retrieve the Alaska Randolf Glacier Inventory v6.0 shapefile.
+
