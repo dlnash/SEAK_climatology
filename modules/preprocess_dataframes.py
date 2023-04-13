@@ -154,9 +154,9 @@ def df_AR_annual_clim(df_lst, community_lst, varname='AR'):
 
         ## make new column that is 0 - non-AR non-extreme, 1 - AR non-extreme, 2 - non-AR extreme, 3 - AR extreme
         df['extremeAR'] = df['AR']
-        df.loc[(df['AR']==0) & (df['prec_{0}'.format(community)] >=0.95), 'extremeAR'] = 3 # non-AR extreme
         df.loc[(df['AR']==1) & (df['prec_{0}'.format(community)] >=0.95), 'extremeAR'] = 2 # AR extreme
-
+        df.loc[(df['AR']==0) & (df['prec_{0}'.format(community)] >=0.95), 'extremeAR'] = 3 # non-AR extreme
+        
         # create day of year column
         df['month'] = df.index.month
         prec_type_lst = [1, 2, 3]
@@ -216,3 +216,58 @@ def calculate_ivt_prec_percentiles(df_lst, community_lst):
     prec_percentile = pd.concat(percentile_lst_prec, axis=1)
         
     return prec_percentile, ivt_percentile
+
+def df_AR_precip_contribution(df_lst, community_lst, varname='prec'):
+    '''
+    Returns dataframe that contribution to annual precipitation from:
+    a) non-AR non-extreme precipitation (0)
+    b) AR non-extreme precipitation (1)
+    c) AR extreme precipitation (2)
+    d) non-AR extreme precipitation (3)
+    
+    
+    Parameters
+    ----------
+    list : list of pandas dataframes
+        list of daily or hourly pandas dataframes with AR and precipitation data
+        
+    community_lst : list
+        list of strings of community names
+
+    Returns
+    -------
+    df : pandas dataframe
+        df with contribution of precipitation to annual climatology from the 4 types for each community
+
+    '''
+    prec_name_lst = ['non-AR non-extreme', 'AR non-extreme', 'AR extreme', 'non-AR extreme']
+    df_final = pd.DataFrame(columns=prec_name_lst, index=community_lst)
+    df_total = pd.DataFrame(columns=['total'], index=community_lst)
+
+    for i, df in enumerate(df_lst):
+        community = community_lst[i]
+        # reset the index as "time"
+        df = df.set_index(pd.to_datetime(df['time']))
+        
+        yr_ar = df['prec'].resample("Y").sum()  # resample to annual total
+        clim = yr_ar.mean() # get average amount of precipitation per year in that category
+        df_total.iloc[i, :] = clim
+        
+        ## make new column that is 0 - non-AR non-extreme, 1 - AR non-extreme, 2 - non-AR extreme, 3 - AR extreme
+        df['extremeAR'] = df['AR'] # AR non-extreme
+        df.loc[(df['AR']==1) & (df['prec_{0}'.format(community)] >=0.95), 'extremeAR'] = 2 # AR extreme
+        df.loc[(df['AR']==0) & (df['prec_{0}'.format(community)] >=0.95), 'extremeAR'] = 3 # non-AR extreme
+
+        prec_type_lst = [0, 1, 2, 3]
+        for j, prec_type in enumerate(prec_type_lst):
+
+            idx = (df.extremeAR == prec_type)
+            ardates_daily = df.loc[idx] # get only type dates
+
+            yr_ar = ardates_daily['prec'].resample("Y").sum()  # resample to annual total
+            clim = yr_ar.mean() # get average amount of precipitation per year in that category
+            total = df_total.iloc[i].values.item()
+            df_final.iloc[i, j] = (clim/total)*100.
+            
+        
+    return df_final
