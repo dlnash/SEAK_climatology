@@ -99,17 +99,22 @@ def df_annual_clim(df_lst, community_lst, varname='prec'):
         community = community_lst[i]
         # reset the index as "time"
         df = df.set_index(pd.to_datetime(df['time']))
-
-        # create day of year column
-        df['month'] = df.index.month
         
-        # get mean
-        clim_mean = df.groupby(['month'])[varname].mean()
+        if varname == 'prec':
+            
+            ## calculate monthly sum
+            df_mon = df[varname].resample('1M').sum()  # monthly sum
+            clim_mean = df_mon.groupby(df_mon.index.month).mean() # get mean of monthly sum
+            clim_std = df_mon.groupby(df_mon.index.month).std() # get std of monthly sum
+        else:
+            # create month column
+            df['month'] = df.index.month
+            clim_mean = df.groupby(['month'])[varname].mean() # get mean
+            clim_std = df.groupby(['month'])[varname].std() # get std
+        
+        # rename and append to list
         clim_mean = clim_mean.rename('{0}_{1}'.format(varname, community))
         clim_mean_lst.append(clim_mean)
-        
-        # get standard deviation
-        clim_std = df.groupby(['month'])[varname].std()
         clim_std = clim_std.rename('{0}_{1}'.format(varname, community))
         clim_std_lst.append(clim_std)
     
@@ -159,8 +164,8 @@ def df_AR_annual_clim(df_lst, community_lst, varname='AR'):
         
         # create day of year column
         df['month'] = df.index.month
-        prec_type_lst = [1, 2, 3]
-        prec_name_lst = ['AR non-extreme', 'AR extreme', 'non-AR extreme']
+        prec_type_lst = [1, 2, 3, 0]
+        prec_name_lst = ['AR non-extreme', 'AR extreme', 'non-AR extreme', 'non-AR non-extreme']
         clim_mean_lst = []
         for j, prec_type in enumerate(prec_type_lst):
             idx = (df.extremeAR == prec_type)

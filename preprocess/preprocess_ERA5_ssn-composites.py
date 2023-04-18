@@ -34,7 +34,6 @@ def preprocess_ivt(ds):
     ds = ds.rename({'latitude':'lat', 'longitude':'lon', 'p71.162': 'IVTu', 'p72.162': 'IVTv'})
     return ds
 
-ds_final = []
 for i, varname in enumerate(varname_lst):
     print('Reading ...', varname)
     fname_pattern = path_to_data + 'downloads/ERA5/{0}/6hr/era5_ak_025dg_6hr_{0}_*.nc'.format(varname)
@@ -47,14 +46,11 @@ for i, varname in enumerate(varname_lst):
         era = era.assign(IVT=lambda era: np.sqrt(era.IVTu**2 + era.IVTv**2))
 
     ## calculate seasonal averages
-    ds_ssn = era.resample(time='QS-DEC', keep_attrs=True).mean()                            
+    ds_ssn = era.resample(time='QS-DEC').mean(keep_attrs=True)                            
 
     # calculate average of seasonal avg
     clim = ds_ssn.groupby('time.season').mean(dim='time').compute()
-    ds_final.append(clim)
     
-ds_write = xr.combine_by_coords(ds_final)
-
-# write to netCDF
-fname = os.path.join(path_to_data, 'preprocessed/ERA5_ivt_250z_mslp_clim.nc')
-ds_write.to_netcdf(path=fname, mode = 'w', format='NETCDF4')
+    # write to netCDF
+    fname = os.path.join(path_to_data, 'preprocessed/ERA5_{0}_clim.nc'.format(varname)
+    clim.to_netcdf(path=fname, mode = 'w', format='NETCDF4')
