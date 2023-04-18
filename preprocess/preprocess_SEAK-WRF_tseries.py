@@ -40,7 +40,7 @@ fname_pattern = path_to_work + 'SEAK-WRF-{0}/WRFDS_{0}_*.nc'.format(varname)
 wrf = xr.open_mfdataset(fname_pattern, combine='by_coords')
         
 if varname == 'UV':
-    wrf = wrf.sel(lev=1000.)
+    wrf = wrf.sel(lev='1000')
       
 if (temporal_res == 'daily') & (varname == 'PCPT'):
     wrf = wrf.resample(time="1D").sum('time')
