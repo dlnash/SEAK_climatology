@@ -52,5 +52,5 @@ for i, varname in enumerate(varname_lst):
     clim = ds_ssn.groupby('time.season').mean(dim='time').compute()
     
     # write to netCDF
-    fname = os.path.join(path_to_data, 'preprocessed/ERA5_{0}_clim.nc'.format(varname)
+    fname = os.path.join(path_to_data, 'preprocessed/ERA5_{0}_clim.nc'.format(varname))
     clim.to_netcdf(path=fname, mode = 'w', format='NETCDF4')
