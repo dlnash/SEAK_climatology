@@ -34,7 +34,7 @@ ext1 = [-141., -130., 54., 61.] # extent of SEAK
 lonmin, lonmax, latmin, latmax = ext1
 xs = [-135.4519, -135.3277, -135.8894, -139.671, -133.1358, -132.4009]
 ys = [58.1122, 59.4538, 59.3988, 59.5121, 55.4769, 55.5400]
-lbl1 = ['Hoonah', 'Skagway', 'Klukwan', 'Yakutat', 'Craig', 'Kasaan
+lbl1 = ['Hoonah', 'Skagway', 'Klukwan', 'Yakutat', 'Craig', 'Kasaan']
         
 fname_pattern = path_to_work + 'SEAK-WRF-{0}/WRFDS_{0}_*.nc'.format(varname)
 wrf = xr.open_mfdataset(fname_pattern, combine='by_coords')
