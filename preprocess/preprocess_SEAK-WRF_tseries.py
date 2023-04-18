@@ -66,7 +66,7 @@ for i, (slon, slat) in enumerate(zip(xs, ys)):
             uvec = units.Quantity(ds['U'].values, "m/s")
             vvec = units.Quantity(ds['V'].values, "m/s")
             uvdir = mpcalc.wind_direction(uvec, vvec)
-            ds = ds.assign('UV'=lambda ds: uvdir)
+            ds = ds.assign(UV=lambda ds: uvdir)
         
     df = ds[varname].to_dataframe()
     df = df.rename(columns={varname: lbl1[i]}) # rename from varname to the name of the community
