@@ -69,13 +69,16 @@ for i, (slon, slat) in enumerate(zip(xs, ys)):
             ds = ds.assign(UV=lambda ds: uvdir)
         
     df = ds[varname].to_dataframe()
+    df['time'] = ds.time.values
     df = df.rename(columns={varname: lbl1[i]}) # rename from varname to the name of the community
     df_lst2.append(df)
         
 ## merge all dfs to one
 df_merged = reduce(lambda x, y: pd.merge(x, y, on = 'time'), df_lst2)
 ## hack for weird behavior for daily df option a
-if (option == 'a'):
+if (option == 'a') & (varname == 'UV'):
+    df_merged = df_merged.drop(['lat_x', 'lat_y', 'lon_x', 'lon_y', 'lev_y', 'lev_x'], axis=1)
+elif (option == 'a'):
     df_merged = df_merged.drop(['lat_x', 'lat_y', 'lon_x', 'lon_y'], axis=1)
     
 ## save to csv file

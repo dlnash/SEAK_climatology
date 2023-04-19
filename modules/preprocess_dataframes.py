@@ -36,6 +36,10 @@ def combine_ivt_ar_prec_df(option, temporal_res, community_lst):
     prec_df = pd.read_csv(fname)
     prec_df = prec_df.replace(0, np.NaN) # replace any instance of zero with nan to ignore dates with no precipitation
     
+    # open UVdir data
+    fname = path_to_out + 'SEAK_UV_{0}_{1}.csv'.format(option, temporal_res)
+    UV_df = pd.read_csv(fname)
+    
     df_lst = []
     for i, community in enumerate(community_lst):
         fname = path_to_out + 'IVT_ERA5_{0}.csv'.format(community)
@@ -68,6 +72,10 @@ def combine_ivt_ar_prec_df(option, temporal_res, community_lst):
 
         ## append community precipitation data
         df['prec'] = prec_df[community]
+        
+        ## append community UV data
+        df['UVdir'] = UV_df[community]
+        
         # reset the index as "time"
         df = df.set_index(pd.to_datetime(df['time']))
         
