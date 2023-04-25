@@ -14,10 +14,10 @@ finaldir="../figs/final_figs/" # final figure folder
 array=(
 elevation_7.5arcsec_with_inset
 ar_barplot
+percentile_bins_daily
 extreme-AR_IVT-250Z_composite_final
 extreme-AR_windrose_elev-overlay_daily
 extreme-AR_prec_composite_all_daily
-percentile_bins_daily
 )
 
 # new names to be fig<name given in array2>
