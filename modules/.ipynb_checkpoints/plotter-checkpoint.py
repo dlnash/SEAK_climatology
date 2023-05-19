@@ -1,6 +1,6 @@
 """
 Filename:    plotter.py
-Author:      Deanna Nash, dlnash@ucsb.edu
+Author:      Deanna Nash, dnash@ucsd.edu
 Description: Functions for plotting
 """
 
@@ -144,17 +144,6 @@ def add_subregion_boxes(ax, subregion_xy, width, height, ecolor, datacrs):
         
     return ax
 
-def add_hasia_labels(ax, fntsize=7, txtcol='white'):        
-    # Add text to highlight locations.
-    txtbx = dict(fill=True, edgecolor='black', linewidth=0,alpha=0.8, zorder=101)
-    kws = {'color': txtcol, 'fontsize': fntsize, 'bbox': txtbx, 'ha': 'left', 'va': 'bottom'}
-    xcoords = [68.00, 75.42, 75.00, 75.00, 81.09, 89.82, 71.03]
-    ycoords = [35.78, 41.16, 35.69, 32.50, 29.00, 27.87, 38.35]
-    txtlbl = ['Hindu Kush', 'Tien Shan', 'Karakoram', 'Western Himalaya', 'Central Himalaya', 'Eastern Himalaya', 'Pamirs']
-    for i in range(len(txtlbl)):
-        ax.text(xcoords[i], ycoords[i], txtlbl[i],**kws)
-        
-    return ax
         
 def plot_maxmin_points(lon, lat, data, extrema, nsize, symbol, color='k',
                        plotValue=True, transform=None):
