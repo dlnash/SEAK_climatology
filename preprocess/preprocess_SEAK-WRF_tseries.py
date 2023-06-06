@@ -23,18 +23,25 @@ path_to_figs = '../figs/'      # figures
 option = 'a'
 
 ### choose which temporal resolution for the precipitation data (hourly or daily)
-temporal_res = 'daily'
+temporal_res = 'hourly'
 
 ### variable name (PCPT, T2, UV)
-varname = 'UV'
+varname = 'PCPT'
 
 ### TODO: make a yaml dict
 ext1 = [-141., -130., 54., 61.] # extent of SEAK
 
 lonmin, lonmax, latmin, latmax = ext1
-xs = [-135.4519, -135.3277, -135.8894, -139.671, -133.1358, -132.4009]
-ys = [58.1122, 59.4538, 59.3988, 59.5121, 55.4769, 55.5400]
-lbl1 = ['Hoonah', 'Skagway', 'Klukwan', 'Yakutat', 'Craig', 'Kasaan']
+
+## for josh and eliza
+xs = [-132.770186, -132.983141, -132.380256]
+ys = [55.217527, 55.546800, 55.545950]
+lbl1 = ['Hydaburg', 'Klawock', 'Kasaan']
+
+# ## For seak-clim
+# xs = [-135.4519, -135.3277, -135.8894, -139.671, -133.1358, -132.4009]
+# ys = [58.1122, 59.4538, 59.3988, 59.5121, 55.4769, 55.5400]
+# lbl1 = ['Hoonah', 'Skagway', 'Klukwan', 'Yakutat', 'Craig', 'Kasaan']
         
 fname_pattern = path_to_work + 'SEAK-WRF-{0}/WRFDS_{0}_*.nc'.format(varname)
 wrf = xr.open_mfdataset(fname_pattern, combine='by_coords')
@@ -82,4 +89,4 @@ elif (option == 'a'):
     df_merged = df_merged.drop(['lat_x', 'lat_y', 'lon_x', 'lon_y'], axis=1)
     
 ## save to csv file
-df_merged.to_csv(path_to_out + 'SEAK_{0}_{1}_{2}.csv'.format(varname, option, temporal_res))
+df_merged.to_csv(path_to_out + 'SEAK_{0}_{1}_{2}_josh-eliza.csv'.format(varname, option, temporal_res))
