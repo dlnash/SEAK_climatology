@@ -16,7 +16,7 @@ source /home/dnash/miniconda3/etc/profile.d/conda.sh
 
 # names of configuration dictionaries to loop through
 array=(
-# case_study_202012 # hourly pressure level data, dec 1-3, 2020
+case_study_202012 # hourly pressure level data, dec 1-4, 2020
 # prec_case_202012 # hourly precip dec 1-3, 2020
 # case_study_202011 # hourly pressure level data, nov 28-30, 2020
 # prec_case_202011 # hourly precip nov 28-30, 2020
@@ -24,7 +24,7 @@ array=(
 # mslp # hourly mslp for entire clim
 # huv # 6 hourly huv data at 850, 500, and 250 hPa for entire clim
 # mslp # 6 hourly mslp data
-ivt # 6 hourly ivt data
+# ivt # 6 hourly ivt data
 )
 
 # now loop through each configuration dictionary to download the ERA5 data

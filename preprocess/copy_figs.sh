@@ -58,4 +58,8 @@ done
 # done
 
 ## convert png to pdf
-python png_to_pdf.py
+# python png_to_pdf.py
+
+## zip to single file
+cd ../figs/final_figs
+zip figs.zip fig*
