@@ -21,6 +21,8 @@ dependencies:
   - metpy
   - xoak
   - odc-geo
+  - cfgrib
+  - pynio
   
   - pip:
     - rasterio
