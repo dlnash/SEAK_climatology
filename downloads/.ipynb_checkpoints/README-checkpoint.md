@@ -29,5 +29,5 @@ Navigate to the (Alaska Department of Fish and Game)[https://www.adfg.alaska.gov
 
 6. Download the Alaska Randolph Glacier Index v6.0
 
-Navigate to the (State of Alaska Geoportal)[https://gis.data.alaska.gov/datasets/81ab2195b29f4ef3ab4cafe565a7c2e0_0/explore?location=59.824584%2C-151.498483%2C5.51] and click "Download" to retrieve the Alaska Randolf Glacier Inventory v6.0 shapefile.
+Navigate to the (State of Alaska Geoportal)[https://gis.data.alaska.gov/datasets/81ab2195b29f4ef3ab4cafe565a7c2e0_0] and click "Download" to retrieve the Alaska Randolf Glacier Inventory v6.0 shapefile.
 

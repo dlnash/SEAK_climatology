@@ -11,5 +11,9 @@ dependencies:
   - jupyter-server-proxy
   - nb_conda_kernels
   - nco
+  - nodejs
+  - ipywidgets
+
   - pip:
       - dask-labextension
+      - npm
