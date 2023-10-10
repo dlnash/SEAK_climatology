@@ -385,7 +385,7 @@ def AR_rank(df):
     Parameters
     ----------
     df : 
-        pandas dataframe with IVT
+        pandas dataframe with IVT (kg m-1 s-1)
     
     Returns
     -------
