@@ -12,10 +12,11 @@ from metpy.units import units
 sys.path.append('../modules') # Path to modules
 from preprocess_dataframes import combine_ivt_ar_prec_df
 from wrf_preprocess import lag_and_combine
+from statistical_tests import xr_zscore_diff_mean
 
 # Set up paths
 
-path_to_data = '/cw3e/mead/projects/cwp140/scratch/dnash/data/'      # project data -- read only
+path_to_data = '/home/dnash/comet_data/'      # project data -- read only
 path_to_work = '/work/dnash/SEAK_clim_data/preprocessed/ERA5-IVT/'
 path_to_out  = '../out/'       # output files (numerical results, intermediate datafiles) -- read & write
 path_to_figs = '../figs/'      # figures
@@ -39,6 +40,11 @@ for i, df in enumerate(df_lst):
     
     ar_dates = tmp.time.values
     ardate_lst.append(tmp.time.values)
+    
+    
+## merge ardate_lst into single list and remove duplicates
+tmp = np.concatenate(ardate_lst, axis=0)
+new_data = np.unique(tmp)
 
 varname_lst = ['huv', 'ivt', 'mslp']
 
@@ -59,7 +65,8 @@ def preprocess_ivt(ds):
     ds = ds.rename({'latitude':'lat', 'longitude':'lon', 'p71.162': 'IVTu', 'p72.162': 'IVTv'})
     return ds
 
-ds_final = []
+diff_ds_final = []
+pval_ds_final = []
 for i, varname in enumerate(varname_lst):
     print('Reading ...', varname)
     fname_pattern = path_to_data + 'downloads/ERA5/{0}/6hr/era5_ak_025dg_6hr_{0}_*.nc'.format(varname)
@@ -79,23 +86,36 @@ for i, varname in enumerate(varname_lst):
 
     ## create lagged composites
     era = lag_and_combine(era, lags=lag_lst, dim='time')
+    
+    all_extreme_ARs = era.sel(time=new_data)
 
     ## make a dataset for each community subset to its AR dates
-    ds_lst = []
+    diff_lst = []
+    pval_lst = []
     for i, ar_dates in enumerate(ardate_lst):
         print('Processing {0}'.format(community_lst[i]))
         tmp = era.sel(time=ar_dates)
-        tmp = tmp.mean('time')
-        tmp = tmp.load()
-        ds_lst.append(tmp) # append to list
+        diff, pval = xr_zscore_diff_mean(all_extreme_ARs, tmp)
+        diff = diff.load()
+        pval = pval.load()
+        diff_lst.append(diff) # append to list
+        pval_lst.append(pval)
 
     ## merge all communities into single DS with "community name" as axis
-    ds_comp = xr.concat(ds_lst, dim=community_lst)
-    ds_comp = ds_comp.rename({'concat_dim':'community'}) # rename concat_dim to community
-    ds_final.append(ds_comp)
+    ds_comp_diff = xr.concat(diff_lst, dim=community_lst)
+    ds_comp_diff = ds_comp_diff.rename({'concat_dim':'community'}) # rename concat_dim to community
+    diff_ds_final.append(ds_comp_diff)
     
-ds_write = xr.combine_by_coords(ds_final)
+    ds_comp_pval = xr.concat(pval_lst, dim=community_lst)
+    ds_comp_pval = ds_comp_pval.rename({'concat_dim':'community'}) # rename concat_dim to community
+    pval_ds_final.append(ds_comp_pval)
+    
+diff_ds_write = xr.combine_by_coords(diff_ds_final)
+pval_ds_write = xr.combine_by_coords(pval_ds_final)
 
 # write to netCDF
-fname = os.path.join(path_to_data, 'preprocessed/ERA5_ivt_250z_mslp_daily_composite.nc')
-ds_write.to_netcdf(path=fname, mode = 'w', format='NETCDF4')
+fname = os.path.join(path_to_data, 'preprocessed/ERA5_ivt_250z_mslp_daily_diff_composite.nc')
+diff_ds_write.to_netcdf(path=fname, mode = 'w', format='NETCDF4')
+
+fname = os.path.join(path_to_data, 'preprocessed/ERA5_ivt_250z_mslp_daily_pval_composite.nc')
+pval_ds_write.to_netcdf(path=fname, mode = 'w', format='NETCDF4')

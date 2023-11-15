@@ -9,3 +9,6 @@
 ## ignore data folder
 
 /data/*
+
+*.pyc # ignore pycache
+
