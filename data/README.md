@@ -38,7 +38,9 @@ Creative Commons Attribution 4.0 International (CC BY 4.0)
 [https://github.com/dlnash/SEAK_climatology](https://github.com/dlnash/SEAK_climatology)
 
 ### Related data sets: 
-The AR data were provided by Bin Guan via [https://dataverse.ucla.edu/dataverse/ar]. Development of the AR detection algorithm and databases was supported by NASA. ERA5 data on single levels [https://doi.org/10.24381/cds.adbb2d47] and pressure levels [https://doi.org/10.24381/cds.bd0915c6] were downloaded from the Copernicus Climate Change Service (C3S) Climate Data Store. The results contain modified Copernicus Climate Change Service information 2020. Neither the European Commission nor ECMWF is responsible for any use that may be made of the Copernicus information or data it contains. USGS Global multi-resolution terrain elevation data 2010 (GMTED2010) entity ID (N50W150) is freely available online and downloaded from EarthExplorer [https://earthexplorer.usgs.gov]. The High Resolution Downscaled Climate Data for Southeast Alaska was accessed on 17 November, 2022 from [https://registry.opendata.aws/wrf-se-alaska-snap]. The Anadromous Waters Catalog for Southeast Alaska (Rivers and Streams) was accessed on 18 April 2023 from the Alaska Department of Fish and Game at [https://www.adfg.alaska.gov/sf/SARR/AWC/index.cfm?ADFG=maps.dataFiles]. The Alaska Randolph Glacier Index v6.0 was accessed on 18 April 2023 from the State of Alaska Geoportal at [https://gis.data.alaska.gov/datasets/81ab2195b29f4ef3ab4cafe565a7c2e0_0/].
+- The AR data were provided by Bin Guan via [https://dataverse.ucla.edu/dataverse/ar](https://dataverse.ucla.edu/dataverse/ar). Development of the AR detection algorithm and databases was supported by NASA. 
+- ERA5 data on single levels [https://doi.org/10.24381/cds.adbb2d47](https://doi.org/10.24381/cds.adbb2d47) and pressure levels [https://doi.org/10.24381/cds.bd0915c6](https://doi.org/10.24381/cds.bd0915c6) were downloaded from the Copernicus Climate Change Service (C3S) Climate Data Store. The results contain modified Copernicus Climate Change Service information 2020. Neither the European Commission nor ECMWF is responsible for any use that may be made of the Copernicus information or data it contains. 
+- The High Resolution Downscaled Climate Data for Southeast Alaska was accessed on 17 November, 2022 from [https://registry.opendata.aws/wrf-se-alaska-snap](https://registry.opendata.aws/wrf-se-alaska-snap). 
 
 Data & File Overview
 --------------------
@@ -82,4 +84,4 @@ File/Format-Specific Information
 Methodological Information
 --------------------------
 
-See `../downloads/README.md` for more information on the data used and `../preprocess/README.md` for information on the preprocessing steps.
+See [`../downloads/README.md`](https://github.com/dlnash/SEAK_climatology/tree/main/downloads) for more information on the data used and [`../preprocess/README.md`](https://github.com/dlnash/SEAK_climatology/tree/main/preprocess) for information on the preprocessing steps.
