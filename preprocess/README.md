@@ -14,7 +14,11 @@ This script generates a .csv hourly time series of IVT values for the grid cell 
 
 4. preprocess_AR_6-hourly.py
 
-This script generates a .csv 6-hourly and daily time series of days an AR makes landfall in southeast Alaska 
+This script generates a .csv 6-hourly and daily time series of days an AR makes landfall in southeast Alaska
+
+5. preprocess_combine_dataframes.py
+
+This script combines IVT, precipitation, UV, and AR time series into a single .csv file for each community.
 
 5. preprocess_ERA5_composites.py
 

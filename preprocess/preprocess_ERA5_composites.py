@@ -17,7 +17,6 @@ from statistical_tests import xr_zscore_diff_mean
 # Set up paths
 
 path_to_data = '/home/dnash/comet_data/'      # project data -- read only
-path_to_work = '/work/dnash/SEAK_clim_data/preprocessed/ERA5-IVT/'
 path_to_out  = '../out/'       # output files (numerical results, intermediate datafiles) -- read & write
 path_to_figs = '../figs/'      # figures
 
@@ -33,9 +32,7 @@ df_lst = combine_ivt_ar_prec_df(option, temporal_res, community_lst) # combine d
 ## get list of dates that are Extreme Precip and AR for each community
 ardate_lst = []
 for i, df in enumerate(df_lst):
-    prec_thres = df['prec'].describe(percentiles=[.95]).loc['95%'] # 95th percentile precipitation threshold
-    # idx = (df.AR == 1) & (df.prec > prec_thres) 
-    idx = (df.AR == 1) & (df.prec > prec_thres) & (df.index != '2008-02-29 00:00:00') # hack to get rid of the leap day (not in WRF data)
+    idx = (df.AR == 1) & (df.extreme == 1) & (df.index != '2008-02-29 00:00:00') # hack to get rid of the leap day (not in WRF data)
     tmp = df.loc[idx]
     
     ar_dates = tmp.time.values

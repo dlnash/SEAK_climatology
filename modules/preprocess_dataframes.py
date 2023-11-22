@@ -72,12 +72,21 @@ def combine_ivt_ar_prec_df(option, temporal_res, community_lst):
 
         ## append community precipitation data
         df['prec'] = prec_df[community]
+        df['prec'] = df['prec'].where(df['prec'] > 2.5, np.nan) # set precipitation below 2.5 mm to nan
         
         ## append community UV data
         df['UVdir'] = UV_df[community]
         
         # reset the index as "time"
         df = df.set_index(pd.to_datetime(df['time']))
+        
+        ## calculate the 90th percentile of precipitation
+        prec_thres = df['prec'].describe(percentiles=[.95]).loc['95%'] # 95th percentile precipitation threshold
+
+        ## select rows where precipitation exceeds 90th percentile
+        df['extreme'] = (df['prec'] >= prec_thres)
+        # create a new var called "extreme" that is 1 if prec exceeds 90th percentile and 0 if not
+        df['extreme'] = df['extreme'].astype(int) 
         
         df_lst.append(df)        
         
@@ -167,8 +176,8 @@ def df_AR_annual_clim(df_lst, community_lst, varname='AR'):
 
         ## make new column that is 0 - non-AR non-extreme, 1 - AR non-extreme, 2 - non-AR extreme, 3 - AR extreme
         df['extremeAR'] = df['AR']
-        df.loc[(df['AR']==1) & (df['prec_{0}'.format(community)] >=0.95), 'extremeAR'] = 2 # AR extreme
-        df.loc[(df['AR']==0) & (df['prec_{0}'.format(community)] >=0.95), 'extremeAR'] = 3 # non-AR extreme
+        df.loc[(df['AR']==1) & (df['extreme'] == 1), 'extremeAR'] = 2 # AR extreme
+        df.loc[(df['AR']==0) & (df['extreme'] == 1), 'extremeAR'] = 3 # non-AR extreme
         
         # create day of year column
         df['month'] = df.index.month
@@ -268,8 +277,8 @@ def df_AR_precip_contribution(df_lst, community_lst, varname='prec'):
         
         ## make new column that is 0 - non-AR non-extreme, 1 - AR non-extreme, 2 - non-AR extreme, 3 - AR extreme
         df['extremeAR'] = df['AR'] # AR non-extreme
-        df.loc[(df['AR']==1) & (df['prec_{0}'.format(community)] >=0.95), 'extremeAR'] = 2 # AR extreme
-        df.loc[(df['AR']==0) & (df['prec_{0}'.format(community)] >=0.95), 'extremeAR'] = 3 # non-AR extreme
+        df.loc[(df['AR']==1) & (df['extreme'] == 1), 'extremeAR'] = 2 # AR extreme
+        df.loc[(df['AR']==0) & (df['extreme'] == 1), 'extremeAR'] = 3 # non-AR extreme
 
         prec_type_lst = [0, 1, 2, 3]
         for j, prec_type in enumerate(prec_type_lst):

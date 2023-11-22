@@ -17,9 +17,16 @@ import colorsys
 from matplotlib.colors import LinearSegmentedColormap # Linear interpolation for color maps
 import matplotlib.patches as mpatches
 import matplotlib.animation as animation
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+from matplotlib.projections import get_projection_class
 import pandas as pd
 import matplotlib.gridspec as gridspec
 import seaborn as sns
+import cmocean.cm as cmo
+
+# Import my modules
+sys.path.append('../modules') # Path to modules
+from constants import ucsd_colors
 
 def draw_basemap(ax, datacrs=ccrs.PlateCarree(), extent=None, xticks=None, yticks=None, grid=False, left_lats=True, right_lats=False, bottom_lons=True, mask_ocean=False, coastline=True):
     """
@@ -538,3 +545,221 @@ class SeabornFig2Grid():
 
     def _resize(self, evt=None):
         self.sg.fig.set_size_inches(self.fig.get_size_inches())
+        
+def range_labels(bins):
+    '''
+    a function that gives nice labels for precipitation ranges
+    '''
+    labels = []
+    for left, right in zip(bins[:-1], bins[1:]):
+        if left == bins[0]:
+            labels.append('<{}'.format(right))
+        elif right == bins[-1]:
+            labels.append('>{}'.format(left))
+        else:
+            labels.append('{}-{}'.format(str(left[:-1]), right))
+
+    return list(labels)
+
+def assign_percentiles(df, prec_bins, ivt_bins, perc_labels):
+    '''
+    ### Determine the percentile group for precipitation and ivt
+
+    - assign a precipitation bin for each row with pandas.cut
+    - assign a ivt bin for each row with pandas.cut
+    '''
+    
+    df = (df.assign(prec_bins=lambda df: pd.cut(df['prec'], bins=prec_bins, labels=perc_labels, right=True))
+            .assign(ivt_bins=lambda df: pd.cut(df['IVT'], bins=ivt_bins, labels=perc_labels, right=True))
+         )
+    
+    df = df.rename(columns={"prec_bins": "Precipitation Percentiles", "ivt_bins": "IVT Percentiles"})
+        
+    return df
+
+def community_heatmap_values(df, perc_lbl):
+    denom = np.empty((6, 6), float)
+    num = np.empty((6, 6), float)
+    extreme_prec_AR = np.empty((6), float)
+    extreme_ivt_AR = np.empty((6), float)
+    for i, perc_i in enumerate(perc_lbl):
+        ## get total number of precipitation days within each percentile bin
+        idx = (df['Precipitation Percentiles'] == perc_i)
+        denom_val = len(df.loc[idx])
+        
+
+        ## get total number of IVT days within the same percentile bin
+        
+        for j, perc_j in enumerate(perc_lbl):
+            idx = (df['Precipitation Percentiles'] == perc_i) & (df['IVT Percentiles'] == perc_j)
+            num_val = len(df.loc[idx])
+            num[j, i] = num_val # put numerator in array
+            
+            # put denominator in array
+            denom[j, i] = denom_val # put denominator in array
+            
+            
+        ## get fraction of AR days that are also 95th percentile precip
+        idx = (df['Precipitation Percentiles'] == perc_i) & (df['AR'] == 1)
+        AR_num = len(df.loc[idx])
+        extreme_prec_AR[i] = (AR_num/denom_val)*100
+
+        ## get fraction of AR days that are also 95th percentile IVT
+        idx = (df['IVT Percentiles'] == perc_i)
+        denom_val = len(df.loc[idx])
+        idx = (df['IVT Percentiles'] == perc_i) & (df['AR'] == 1)
+        AR_num = len(df.loc[idx])
+        extreme_ivt_AR[i] = (AR_num/denom_val)*100
+        
+    heatmap_vals = (num/denom)*100
+    
+    return heatmap_vals, extreme_prec_AR, extreme_ivt_AR
+
+
+def create_heatmap_plot(heatmap_vals, extreme_prec_AR, extreme_ivt_AR, ax, ax_histx, ax_histy, tck_lblx, tck_lbly, bar_tck):
+
+    # no labels, remove spines
+    ax_histx.tick_params(axis="x", labelbottom=False)
+    ax_histx.spines['top'].set_visible(False)
+    ax_histx.spines['right'].set_visible(False)
+    ax_histx.set_ylim(0, 99)
+
+    ax_histy.tick_params(axis="y", labelleft=False)
+    ax_histy.spines['top'].set_visible(False)
+    ax_histy.spines['right'].set_visible(False)
+    ax_histy.set_ylim(0, 99)
+
+    ax_histx.bar(x = bar_tck, height=extreme_prec_AR, align='edge', color='#DAE6E6')
+    ax_histy.barh(range(len(bar_tck)), np.flip(extreme_ivt_AR), align='edge', color='#DAE6E6')
+
+    ## add heatmap
+    g = sns.heatmap(np.flipud(heatmap_vals), cmap=cmo.dense, annot=True, linewidth=.5, xticklabels=tck_lblx, yticklabels=tck_lbly, ax=ax, cbar=False)
+    # apply tick parameters    
+    ax.tick_params(direction='out', 
+                   labelsize=8, 
+                   length=4, 
+                   pad=2, 
+                   color='black',
+                   labelrotation=0.0)
+
+## Define a function to convert centered angles to left-edge radians
+def _convert_dir(directions, N=None):
+    if N is None:
+        N = directions.shape[0]
+    barDir = directions * np.pi/180. - np.pi/N
+    barWidth = 2 * np.pi / N
+    return barDir, barWidth
+
+## define wind rose function
+def wind_rose(ax, rosedata, wind_dirs, legend_req, palette=None):
+    if palette is None:
+        palette = sns.color_palette('inferno', n_colors=rosedata.shape[1])
+    else:
+        palette = sns.color_palette(palette, n_colors=rosedata.shape[1])
+
+    bar_dir, bar_width = _convert_dir(wind_dirs)
+
+    
+    ax.set_theta_direction('clockwise')
+    ax.set_theta_zero_location('N')
+
+    for n, (c1, c2) in enumerate(zip(rosedata.columns[:-1], rosedata.columns[1:])):
+        if n == 0:
+            # first column only
+            ax.bar(bar_dir, rosedata[c1].values, 
+                   width=bar_width,
+                   color=palette[0],
+                   edgecolor='none',
+                   label=c1,
+                   linewidth=0,
+                   alpha=0.8)
+
+        # all other columns
+        ax.bar(bar_dir, rosedata[c2].values, 
+               width=bar_width, 
+               bottom=rosedata.cumsum(axis=1)[c1].values,
+               color=palette[n+1],
+               edgecolor='none',
+               label=c2,
+               linewidth=0,
+               alpha=0.8)
+        
+    # xticks = ax.set_xticks(np.pi/180. * np.linspace(180,  -180, 8, endpoint=False))
+    # xtl = ax.set_xticklabels(['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']) # turns on cardinal direction labels
+    xtl = ax.set_xticklabels([]) # removes the cardinal direction tick labels
+
+    if legend_req == True:
+        leg = ax.legend(loc=(0.75, 0.1), ncol=1, fontsize=12, title='Percentile')
+    
+    return ax
+
+def calc_rose(df, prec_bins, prec_labels, dir_bins, dir_labels):
+    '''
+    ### Determine the relative percentage of observation in each speed and direction bin
+    # Adapted from: https://gist.github.com/phobson/41b41bdd157a2bcf6e14 as an example
+    Here's how we do it:
+
+    - assign a precipitation bin for each row with pandas.cut
+    - assign a direction bin for each row (again, pandas.cut)
+    - unify the 360° and 0° bins under the 0° label
+    - group the data simultaneously on both precipitation and direction bins
+    - compute the size of each group
+    - unstack (pivot) the speed bins into columns
+    - fill missing values with 0
+    - sort the columns -- they are a catgerical index, so "calm" will be first (this is awesome!)
+    - convert all of the counts to percentages of the total number of observations
+    '''
+    total_count = df.shape[0]
+    calm_thres = prec_bins[1]
+    idx = (df.prec < calm_thres)
+    
+    calm_count = len(df.loc[idx])
+    print('Of {} total observations, {} have less than {} mm of precipitation.'.format(total_count, calm_count, calm_thres))
+
+    df = (df.assign(prec_bins=lambda df: pd.cut(df['prec'], bins=prec_bins, labels=prec_labels, right=False)) 
+          .assign(ivtdir_bins=lambda df: pd.cut(df['ivtdir'], bins=dir_bins, labels=dir_labels, right=False))
+          .replace({'ivtdir_bins': {360: 0}})
+          .groupby(by=['prec_bins', 'ivtdir_bins'])
+          .size()
+          .unstack(level='prec_bins')
+          .fillna(0)
+          # .assign(calm=lambda df: calm_count / df.shape[0])
+          .sort_index(axis=1)
+          .applymap(lambda x: x / total_count * 100)
+         )
+        
+    return df
+
+
+def build_rose(mapx, mapy, ax, width, rose, directions, legend_req, rad_ticks, transform):
+    '''
+    adapted from: https://stackoverflow.com/questions/55854988/subplots-onto-a-basemap/55890475#55890475
+    and: https://stackoverflow.com/questions/46262749/plotting-scatter-of-several-polar-plots/46263911#46263911
+    Function to create inset axes and plot wind rose on it
+
+    '''
+    lbldict = {'fontsize': 7,
+               'fontweight': 'normal',
+               'verticalalignment': 'bottom',
+               'horizontalalignment': 'center'}
+    
+    ax_h = inset_axes(ax, width=width, height=width, loc=10,
+                      # projection='polar',
+                      bbox_to_anchor=(mapx, mapy), 
+                      bbox_transform=transform, 
+                      borderpad=0, 
+                      axes_kwargs={'alpha': 0.35, 'visible': True},
+                      axes_class=get_projection_class("polar"))
+    
+    wind_rose(ax_h, rose, directions, legend_req, palette=[ucsd_colors['yellow'], ucsd_colors['blue'], ucsd_colors['aqua']])
+    ax_h.set_rticks(rad_ticks, labelsize=5)  # Less radial ticks
+    ax_h.set_rlabel_position(90.0)  # Move radial labels away from plotted line
+    tmp = list(map(str, rad_ticks[:-1]))
+    ytcklbls = list(map("{}%".format, tmp)) + [''] # sets radial tick labels
+    ax_h.set_yticklabels(ytcklbls, fontdict=lbldict) 
+    ax_h.yaxis.grid(linewidth=0.5, linestyle='--')
+    # ax_h.axis('off') # this turns off the axis grid completely
+    ax_h.patch.set_alpha(0.01) # this sets the face color of the axis grid to transparent
+    ax_h.spines['polar'].set_visible(False) # this turns the outer edge of the polar plot off
+    
+    return ax_h

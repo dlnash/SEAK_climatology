@@ -15,8 +15,7 @@ from wrf_preprocess import lag_and_combine
 
 # Set up paths
 
-path_to_data = '/cw3e/mead/projects/cwp140/scratch/dnash/data/'      # project data -- read only
-path_to_work = '/work/dnash/SEAK_clim_data/preprocessed/ERA5-IVT/'
+path_to_data = '/home/dnash/comet_data/'      # project data -- read only
 path_to_out  = '../out/'       # output files (numerical results, intermediate datafiles) -- read & write
 path_to_figs = '../figs/'      # figures
 
@@ -34,9 +33,7 @@ df_lst = combine_ivt_ar_prec_df(option, temporal_res, community_lst) # combine d
 
 ardate_lst = []
 for i, df in enumerate(df_lst):
-    prec_thres = df['prec'].describe(percentiles=[.95]).loc['95%'] # 95th percentile precipitation threshold
-    # idx = (df.AR == 1) & (df.prec > prec_thres) 
-    idx = (df.AR == 1) & (df.prec > prec_thres) & (df.index != '2008-02-29 00:00:00') # hack to get rid of the leap day (not in WRF data)
+    idx = (df.AR == 1) & (df.extreme == 1) & (df.index != '2008-02-29 00:00:00') # hack to get rid of the leap day (not in WRF data)
     tmp = df.loc[idx]
     
     ar_dates = tmp.time.values
@@ -45,7 +42,7 @@ for i, df in enumerate(df_lst):
 ## merge ardate_lst into single list and remove duplicates
 tmp = np.concatenate(ardate_lst, axis=0)
 new_data = np.unique(tmp)
-
+print(len(new_data))
 ## get list of dates that are:
 ### (left) top 5th percentile IVT, bottom 5th percentile of precip
 
@@ -62,7 +59,7 @@ for i, df in enumerate(df_lst):
 ## merge ardate_lst into single list and remove duplicates
 tmp = np.concatenate(ardate_lst, axis=0)
 new_data2 = np.unique(tmp)
-
+print(len(new_data2))
 ## get list of dates that are:
 ### (right) top 95th percentile IVT, top 95th percentile precip
 
@@ -79,7 +76,7 @@ for i, df in enumerate(df_lst):
 ## merge ardate_lst into single list and remove duplicates
 tmp = np.concatenate(ardate_lst, axis=0)
 new_data3 = np.unique(tmp)
-
+print(len(new_data3))
 ardate_lst = [new_data, new_data2, new_data3]
 
 varname_lst = ['huv', 'ivt', 'mslp']
