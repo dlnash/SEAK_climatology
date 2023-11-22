@@ -8,7 +8,7 @@ This script extracts identified variables from the SEAK WRF precipitation data f
 
 This script generates a .csv hourly time series of precipitation values for the grid cell closest to each community.
 
-3. preprocess_ERA-IVT_hourly.py
+3. preprocess_ERA-IVT_tseries.py
 
 This script generates a .csv hourly time series of IVT values for the grid cell closest to each community.
 
@@ -16,7 +16,7 @@ This script generates a .csv hourly time series of IVT values for the grid cell 
 
 This script generates a .csv 6-hourly and daily time series of days an AR makes landfall in southeast Alaska
 
-5. preprocess_combine_dataframes.py
+5. combine_vars_into_single_csv.py
 
 This script combines IVT, precipitation, UV, and AR time series into a single .csv file for each community.
 
