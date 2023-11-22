@@ -24,7 +24,7 @@ path_to_figs = '../figs/'      # figures
 option = 'a'
 temporal_res = 'daily'
 community_lst = ['Hoonah', 'Skagway', 'Klukwan', 'Yakutat', 'Craig', 'Kasaan']
-varname = 'UV' # 'PCPT' or 'UV'
+varname = 'PCPT' # 'PCPT' or 'UV'
 
 df_lst = combine_ivt_ar_prec_df(option, temporal_res, community_lst) # combine dfs into list of dfs
 

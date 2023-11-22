@@ -62,7 +62,7 @@ The files (listed below) contain daily meteorological information between Januar
 File/Format-Specific Information
 --------------------------------
 
-### `SEAK_climatolog/data/SEAK_combined_*.csv`
+### `SEAK_climatology/data/SEAK_combined_*.csv`
 - Number of variables: 13
 - Number of cases/rows: 14610
 - Variable name, defining any abbreviations, units of measure, other notes:
