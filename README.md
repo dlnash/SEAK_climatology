@@ -11,4 +11,4 @@ See `/preprocess/` for preprocessing scripts.
 
 See `/analysis/` for scripts to recreate figures.
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10214892.svg)](https://doi.org/10.5281/zenodo.10214892)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10214937.svg)](https://doi.org/10.5281/zenodo.10214937)
