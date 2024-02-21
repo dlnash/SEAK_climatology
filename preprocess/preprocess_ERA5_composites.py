@@ -92,7 +92,7 @@ for i, varname in enumerate(varname_lst):
     for i, ar_dates in enumerate(ardate_lst):
         print('Processing {0}'.format(community_lst[i]))
         tmp = era.sel(time=ar_dates)
-        diff, pval = xr_zscore_diff_mean(all_extreme_ARs, tmp)
+        diff, pval = xr_zscore_diff_mean(tmp, all_extreme_ARs)
         diff = diff.load()
         pval = pval.load()
         diff_lst.append(diff) # append to list
