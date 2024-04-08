@@ -23,10 +23,22 @@ import pandas as pd
 import matplotlib.gridspec as gridspec
 import seaborn as sns
 import cmocean.cm as cmo
+import xarray as xr
 
 # Import my modules
 sys.path.append('../modules') # Path to modules
 from constants import ucsd_colors
+
+def plot_terrain(ax, ext):
+    fname = '/work/bkawzenuk_work/Maps/data/ETOPO1_Bed_c_gmt4.grd'
+    datacrs = ccrs.PlateCarree()
+    grid = xr.open_dataset(fname)
+    grid = grid.where(grid.z > 0) # mask below sea level
+    grid = grid.sel(x=slice(ext[0], ext[1]), y=slice(ext[2], ext[3]))
+    cs = ax.pcolormesh(grid.x, grid.y, grid.z,
+                        cmap=cmo.gray_r, transform=datacrs, alpha=0.7)
+    
+    return ax
 
 def draw_basemap(ax, datacrs=ccrs.PlateCarree(), extent=None, xticks=None, yticks=None, grid=False, left_lats=True, right_lats=False, bottom_lons=True, mask_ocean=False, coastline=True):
     """
@@ -73,18 +85,14 @@ def draw_basemap(ax, datacrs=ccrs.PlateCarree(), extent=None, xticks=None, ytick
     - Alpha sets transparency (0 is transparent, 1 is solid)
     
     """
+    ## some style dictionaries
+    kw_ticklabels = {'size': 10, 'color': 'dimgray', 'weight': 'light'}
+    kw_grid = {'linewidth': .5, 'color': 'k', 'linestyle': '--', 'alpha': 0.4}
+    kw_ticks = {'length': 4, 'width': 0.5, 'pad': 2, 'color': 'black',
+                         'labelsize': 10, 'labelcolor': 'dimgray'}
 
     # Use map projection (CRS) of the given Axes
     mapcrs = ax.projection    
-    
-    ## Map Extent
-    # If no extent is given, use global extent
-    if extent is None:        
-        ax.set_global()
-        extent = [-180., 180., -90., 90.]
-    # If extent is given, set map extent to lat/lon bounding box
-    else:
-        ax.set_extent(extent, crs=datacrs)
     
     # Add map features (continents and country borders)
     ax.add_feature(cfeature.LAND, facecolor='0.9')      
@@ -104,8 +112,7 @@ def draw_basemap(ax, datacrs=ccrs.PlateCarree(), extent=None, xticks=None, ytick
                       linewidth=.5, color='black', alpha=0.5, linestyle='--')
         
     else:
-        gl = ax.gridlines(crs=datacrs, draw_labels=True,
-                      linewidth=.5, color='black', alpha=0.5, linestyle='--')
+        gl = ax.gridlines(crs=datacrs, draw_labels=True, **kw_grid)
         gl.top_labels = False
         gl.left_labels = left_lats
         gl.right_labels = right_lats
@@ -114,8 +121,8 @@ def draw_basemap(ax, datacrs=ccrs.PlateCarree(), extent=None, xticks=None, ytick
         gl.ylocator = mticker.FixedLocator(yticks)
         gl.xformatter = LONGITUDE_FORMATTER
         gl.yformatter = LATITUDE_FORMATTER
-        gl.xlabel_style = {'size': 10, 'color': 'gray', 'fontweight': 'light'}
-        gl.ylabel_style = {'size': 10, 'color': 'gray', 'fontweight': 'light'}
+        gl.xlabel_style = kw_ticklabels
+        gl.ylabel_style = kw_ticklabels
     
     ## Gridlines
     # Draw gridlines if requested
@@ -124,17 +131,26 @@ def draw_basemap(ax, datacrs=ccrs.PlateCarree(), extent=None, xticks=None, ytick
         gl.ylines = True
     if (grid == False):
         gl.xlines = False
-        gl.ylines = False
-            
+        gl.ylines = False            
 
-    # apply tick parameters    
-    ax.tick_params(direction='out', 
-                   labelsize=10, 
-                   length=4, 
-                   pad=2, 
-                   color='black')
+    # apply tick parameters
+    ax.set_xticks(xticks, crs=datacrs)
+    ax.set_yticks(yticks, crs=datacrs)
+    ax.set_yticklabels(yticks, color='w', size=1) # hack: make the ytick labels white so the ticks show up but not the labels
+    ax.set_xticklabels(xticks, color='w', size=1) # hack: make the ytick labels white so the ticks show up but not the labels
+    # ax.ticklabel_format(axis='both', style='plain')
+
+    ## Map Extent
+    # If no extent is given, use global extent
+    if extent is None:        
+        ax.set_global()
+        extent = [-180., 180., -90., 90.]
+    # If extent is given, set map extent to lat/lon bounding box
+    else:
+        ax.set_extent(extent, crs=datacrs)
     
     return ax
+
 
 def add_subregion_boxes(ax, subregion_xy, width, height, ecolor, datacrs):
     '''This function will add subregion boxes to the given axes.
