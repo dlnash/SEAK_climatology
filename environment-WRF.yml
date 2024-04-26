@@ -1,0 +1,25 @@
+name: SEAK-wrf
+channels:
+  - conda-forge
+  - defaults  
+dependencies:
+  - python
+  - pip
+  - numpy
+  - matplotlib
+  - pandas
+  - netcdf4
+  - xarray
+  - cartopy
+  - cmocean
+  - seaborn
+  - cmocean
+  - ipykernel
+  - geopandas
+  - pyyaml
+  - dask
+  - wrf-python
+  - cfgrib
+  - pynio
+
+
