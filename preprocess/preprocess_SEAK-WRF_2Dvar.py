@@ -1,5 +1,5 @@
 """
-Filename:    preprocess_SEAK-WRF.py
+Filename:    preprocess_SEAK-WRF_2Dvar.py
 Author:      Deanna Nash, dlnash@ucsb.edu
 Description: preprocess hourly variables from 40 years of SEAK-WRF data and save as yearly nc files
 """
