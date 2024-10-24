@@ -3,6 +3,13 @@ Filename:    preprocess_AR_6-hourly.py
 Author:      Deanna Nash, dnash@ucsd.edu
 Description: This script generates a .csv 6-hourly and daily time series of days an AR makes landfall in southeast Alaska based on tARget v3 AR detection algorithm.
 """
+# Import Python modules
+import os, sys
+import yaml
+import numpy as np
+import pandas as  pd
+import xarray as xr
+from datetime import timedelta, date
 
 # Set up paths
 server = "skyriver"
@@ -24,8 +31,7 @@ start_date = '1980-01-01 0:00'
 end_date = '2019-12-31 23:00'
 
 ## Read data
-filename =  'downloads/AR_catalog/globalARcatalog_ERA-Interim_1979-2019_v3.0.nc'
-ar_filename = path_to_data + filename
+ar_filename =  '/home/dnash/comet_data/downloads/AR_Catalog/globalARcatalog_ERA-Interim_1979-2019_v3.0.nc'
 ds = xr.open_dataset(ar_filename)
 da = ds.sel(time=slice(start_date, end_date), lat=slice(latmin, latmax), lon=slice(lonmin, lonmax))
 
@@ -111,12 +117,9 @@ def get_ar_dates_from_duration_df(duration_df, freq):
     # Get list of AR time steps from the start-stop dates
     dt_lst = []
     for index, row in duration_df.iterrows():
-        if freq == '1H':
-            dt = pd.date_range(row['start_date'], row['end_date'], freq=freq)
-            dt_lst.append(dt)
-        elif freq == '1D':
-                dt = pd.date_range(row['start_date'], row['end_date'], freq=freq).normalize()
-                dt_lst.append(dt)
+        dt = pd.date_range(row['start_date'], row['end_date'], freq='1H')
+        dt_lst.append(dt)
+        
     ardates = dt_lst[0].union_many(dt_lst[1:])
     # put into dataframe
     d = {'ar_dates': ardates}
@@ -127,12 +130,27 @@ def get_ar_dates_from_duration_df(duration_df, freq):
     df_new = df.ar_dates.unique()
     d = {'ar_dates': df_new}
     df = pd.DataFrame(data=d)
+    
+    if freq == '1D':
+        ## this method takes the hourly dataset and converts it to daily
+        df_hourly = df
+        df_hourly.index = pd.to_datetime(df_hourly.ar_dates)
+        idx = (df_hourly.index.hour == 0) | (df_hourly.index.hour == 6) | (df_hourly.index.hour == 12) | (df_hourly.index.hour == 18)
+        test_daily = df_hourly.loc[idx]
+        test_daily.index = test_daily.ar_dates.dt.normalize()
+        df_new = test_daily.index.unique()
+        d = {'ar_dates': df_new}
+        df_daily = pd.DataFrame(data=d)
+        df = df_daily
+    else:
+        df = df
+        
+    ## clean up dataframe to have 1's where AR == True
     df.index = pd.to_datetime(df.ar_dates)
     df = df.drop(['ar_dates'], axis=1)
     df = df.reset_index()
     df = df.rename(columns={"ar_dates": "dates"})
     df['ar'] = 1
-
 
     # date array with all days
     dates_allDays = pd.date_range(start=start_date, end=end_date, freq=freq)
